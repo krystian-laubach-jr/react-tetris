@@ -1,5 +1,4 @@
 import './TetrisNext.css';
-import { useEffect } from 'react';
 function TetrisNext({nextPiece, nextColor, onNextClick}) {
 
   return (

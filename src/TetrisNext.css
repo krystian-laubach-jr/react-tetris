@@ -14,34 +14,3 @@
     );
 }
 
-#nextGrid {
-    background-color: black;
-    width: calc(35vw * 4 / 10);
-    height: calc(70vw * 4 / 20);
-
-    max-height: calc(90vh * 4 / 20);
-    max-width: calc(45vh * 4 / 10);
-
-    display: flex;
-    flex-direction: column;
-}
-
-.nextGridRow {
-    height: calc(100%/4);
-    width: 100%;
-
-    display: flex;
-}
-
-.nextGridCell {
-    width: calc(100%/4);
-    height: 100%;
-    border: 1px solid rgb(67, 67, 67);
-
-    box-sizing: border-box;
-}
-
-.nextGridCell:hover {
-    background-color: rgb(67, 67, 67);
-}
-
