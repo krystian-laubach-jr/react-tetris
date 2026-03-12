@@ -1,0 +1,31 @@
+#fieldGrid {
+    background-color: black;
+    width: 35vw;
+    height: 70vw;
+
+    max-height: 90vh;
+    max-width: 45vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.fieldGridRow {
+    height: 5%;
+    width: 100%;
+
+    display: flex;
+}
+
+.fieldGridCell {
+    width: 10%;
+    height: 100%;
+    border: 1px solid rgb(67, 67, 67);
+
+    box-sizing: border-box;
+}
+
+.fieldGridCell:hover {
+    background-color: rgb(67, 67, 67);
+}
+

@@ -1,0 +1,130 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+main {
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;  
+}
+
+#tetrisManagerContainer {
+  display: flex;
+
+  flex-direction: row;
+  justify-content: center;
+}
+
+.sideContainer {
+  height: 70vw;
+  max-height: 90vh;
+
+  width: 35vw;
+  max-width: 70vh;
+
+  display: flex;
+}
+
+.border {
+  padding: 1vw;
+  border: 5px solid black;
+  border-radius: 2vw;
+  background-color: gray;
+  text-align: center;
+
+  max-height: fit-content;
+}
+
+@font-face {
+  font-family: minecraft;
+  src: url(assets/Minecraft.ttf);
+}
+
+.brick {
+  --border-size: calc(var(--brick-size) * 0.2);
+
+  box-sizing: border-box;
+
+  width: var(--brick-size);
+  height: var(--brick-size);
+
+  border-top: var(--border-size) solid;
+  border-left: var(--border-size) solid;
+  border-bottom: var(--border-size) solid;
+  border-right: var(--border-size) solid;
+
+  border-style: outset;
+}
+
+.red {
+  background-color: red;
+  
+  border-top-color: tomato;
+  border-left-color: darkred;
+  border-bottom-color: darkred;
+  border-right-color: tomato;
+}
+
+.orange {
+  background-color: orange;
+
+  border-top-color: sandybrown;
+  border-left-color: darkorange;
+  border-bottom-color: darkorange;
+  border-right-color: sandybrown;
+}
+
+.yellow {
+  background-color: yellow;
+
+  border-top-color: lemonchiffon;
+  border-left-color: gold;
+  border-bottom-color: gold;
+  border-right-color: lemonchiffon;
+}
+
+.green {
+  background-color: green;
+  
+  border-top-color: lightgreen;
+  border-left-color: darkgreen;
+  border-bottom-color: darkgreen;
+  border-right-color: lightgreen;
+}
+
+.cyan {
+  background-color: cyan;
+
+  border-top-color: lightcyan;
+  border-left-color: darkcyan;
+  border-bottom-color: darkcyan;
+  border-right-color: lightcyan;
+}
+
+.blue {
+  background-color: blue;
+
+  border-top-color: lightskyblue;
+  border-left-color: darkblue;
+  border-bottom-color: darkblue;
+  border-right-color: lightskyblue;
+}
+
+.purple {
+  background-color: magenta;
+
+  border-top-color: plum;
+  border-left-color: purple;
+  border-bottom-color: purple;
+  border-right-color: plum;
+}
+
+
+
+
+
