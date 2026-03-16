@@ -1,4 +1,4 @@
-import './App.css';
+import './styles/App.css';
 import { useState, useEffect } from 'react';
 
 import LeftMenu from './LeftMenu';
@@ -10,6 +10,7 @@ function TetrisManager() {
 
   const generateField = () => {
     let tempRowsArray = [];
+    
     for (let i=0; i < 20; i++) {
 
       let tempColsArray = [];

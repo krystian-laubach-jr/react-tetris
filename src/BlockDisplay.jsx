@@ -1,4 +1,4 @@
-import './BlockDisplay.css';
+import './styles/BlockDisplay.css';
 function BlockDisplay({piece, color}) {
 
   return (
@@ -12,7 +12,7 @@ function BlockDisplay({piece, color}) {
         </div>
 
         <div className='blockDisplayGridCell'>
-          {(piece == 'line') && <div className={`brick ${color}`}></div>}
+          {(piece === 'line') && <div className={`brick ${color}`}></div>}
         </div>
 
         <div className='blockDisplayGridCell'>
@@ -24,11 +24,11 @@ function BlockDisplay({piece, color}) {
         </div>
 
         <div className='blockDisplayGridCell'>
-          {(piece == 'l') && <div className={`brick ${color}`}></div>}
+          {(piece === 'l') && <div className={`brick ${color}`}></div>}
         </div>
 
         <div className='blockDisplayGridCell'>
-          {(piece == 'line' || piece == 'rl') && <div className={`brick ${color}`}></div>}
+          {(piece === 'line' || piece === 'rl') && <div className={`brick ${color}`}></div>}
         </div>
 
         <div className='blockDisplayGridCell'>
@@ -37,19 +37,19 @@ function BlockDisplay({piece, color}) {
 
       <div className='blockDisplayGridRow'>
         <div className='blockDisplayGridCell'>
-          {(piece == 'z') && <div className={`brick ${color}`}></div>}
+          {(piece === 'z') && <div className={`brick ${color}`}></div>}
         </div>
 
         <div className='blockDisplayGridCell'>
-          {(piece == 'z' || piece == 'square' || piece == 'l') && <div className={`brick ${color}`}></div>}
+          {(piece === 'z' || piece === 'square' || piece === 'l') && <div className={`brick ${color}`}></div>}
         </div>
         
         <div className='blockDisplayGridCell'>
-          {(piece == 'line' || piece == 'square' || piece == 't' || piece == 'rz' || piece == 'rl') && <div className={`brick ${color}`}></div>}
+          {(piece === 'line' || piece === 'square' || piece === 't' || piece === 'rz' || piece === 'rl') && <div className={`brick ${color}`}></div>}
         </div>
 
         <div className='blockDisplayGridCell'>
-          {(piece == 'rz') && <div className={`brick ${color}`}></div>}
+          {(piece === 'rz') && <div className={`brick ${color}`}></div>}
         </div>
       </div>
 
@@ -58,15 +58,15 @@ function BlockDisplay({piece, color}) {
         </div>
 
         <div className='blockDisplayGridCell'>
-          {(piece == 'z' || piece == 'square' || piece == 'l' || piece == 't' || piece == 'rz' || piece == 'rl') && <div className={`brick ${color}`}></div>}
+          {(piece === 'z' || piece === 'square' || piece === 'l' || piece === 't' || piece === 'rz' || piece === 'rl') && <div className={`brick ${color}`}></div>}
         </div>
 
         <div className='blockDisplayGridCell'>
-          {(piece == 'line' || piece == 'z' || piece == 'square' || piece == 'l' || piece == 't' || piece == 'rz' || piece == 'rl') && <div className={`brick ${color}`}></div>}
+          {(piece === 'line' || piece === 'z' || piece === 'square' || piece === 'l' || piece === 't' || piece === 'rz' || piece === 'rl') && <div className={`brick ${color}`}></div>}
         </div>
 
         <div className='blockDisplayGridCell'>
-          {(piece == 't') && <div className={`brick ${color}`}></div>}
+          {(piece === 't') && <div className={`brick ${color}`}></div>}
         </div>
       </div>
 
