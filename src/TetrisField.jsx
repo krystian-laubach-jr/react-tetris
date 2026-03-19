@@ -36,7 +36,7 @@ function TetrisField({fieldData, onCellClick}) {
             {row.map(cell => (
               <div className='fieldGridCell' key={cell.id} onClick={() => onCellClick(cell.id)}>
                 <p>{cell.id}</p>
-                {cell.isFilled && <div className='brick purple'></div>}
+                {cell.isFilled && <div className={`brick ${cell.color}`}></div>}
               </div>
             ))}
           </div>
