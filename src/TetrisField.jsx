@@ -1,6 +1,6 @@
 import './styles/TetrisField.css';
 import { useEffect } from 'react';
-function TetrisField({fieldData, onCellClick}) {
+function TetrisField({fieldData}) {
 
   useEffect(() => {
     const getBrickSize = () => {
@@ -34,7 +34,7 @@ function TetrisField({fieldData, onCellClick}) {
         {fieldData && fieldData.map((row, rowIndex) => (
           <div className='fieldGridRow' key={rowIndex}>
             {row.map(cell => (
-              <div className='fieldGridCell' key={cell.id} onClick={() => onCellClick(cell.id)}>
+              <div className='fieldGridCell' key={cell.id}>
                 <p>{cell.id}</p>
                 {cell.isFilled && <div className={`brick ${cell.color}`}></div>}
               </div>

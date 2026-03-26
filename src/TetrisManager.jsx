@@ -26,26 +26,6 @@ function TetrisManager() {
     return tempRowsArray
   }
 
-  const toggleCellState = (idToToggle) => {
-    const newField = field.map(row =>
-      row.map(cell => {
-        if (cell.id === idToToggle) {
-          if (cell.isFilled) {
-            return { ...cell, isFilled: false }
-          } else {
-            return { ...cell, isFilled: true }
-          }
-          
-        } else {
-          return cell
-        }
-        }
-      )
-    );
-
-    setField(newField);
-  }
-
   const colors = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple' ];
   const [nextColor, setNextColor] = useState();
 
@@ -109,7 +89,7 @@ function TetrisManager() {
     <>
       <button onClick={() => spawnPiece(nextPiece)}>spawn piece</button>
       {/* <LeftMenu/> */}
-      <TetrisField fieldData={field} onCellClick={toggleCellState}/>
+      <TetrisField fieldData={field}/>
       <TetrisNext nextPiece={nextPiece} nextColor={nextColor} onNextClick={getNextStockedPiece}/>
     </>
 
