@@ -86,7 +86,28 @@ function TetrisManager() {
 
 
   const fallPiece = () => {
-    
+
+  const isAtBottom = currentPieceCells.some(id => {
+    const cell = field.flat().find(c => c.id === id);
+    return cell.rowId === 19;
+  });
+
+  const isPieceUnder = currentPieceCells.some(id => {
+    const cell = field.flat().find(c => c.id === id);
+    const cellBelow = field[cell.rowId + 1]?.[cell.colId];
+
+    return (
+      cellBelow &&
+      cellBelow.isFilled &&
+      !currentPieceCells.includes(cellBelow.id)
+    );
+  });
+
+  if (isAtBottom || isPieceUnder) {
+    spawnPiece(nextPiece);
+    return
+  }
+
   const newCells = currentPieceCells.map(id => {
     const cell = field.flat().find(c => c.id === id);
     return `${cell.rowId + 1}.${cell.colId}`;
