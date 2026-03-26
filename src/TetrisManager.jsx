@@ -1,5 +1,5 @@
 import './styles/App.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 
 import LeftMenu from './LeftMenu';
 import TetrisField from './TetrisField';
@@ -40,7 +40,7 @@ function TetrisManager() {
     { name: 'square', coords: ['0.4', '0.5', '1.4', '1.5'] }
   ];
 
-  const [currentPiece, setCurrentPiece] = useState();
+
   const [nextPiece, setNextPiece] = useState();
 
   const [stockedPieces, setStockedPieces] = useState([]);
@@ -63,6 +63,9 @@ function TetrisManager() {
     setNextColor(colors[Math.floor(Math.random() * (7))])
   }
 
+  const [currentPieceCells, setCurrentPieceCells] = useState([]);
+  const [currentPieceColor, setCurrentPieceColor] = useState("")
+
   const spawnPiece = (piece) => {
     const cellsToFill = pieceStartingCells.find(p => p.name === piece).coords;
 
@@ -75,9 +78,38 @@ function TetrisManager() {
     );
 
     setField(newField);
+    setCurrentPieceCells(cellsToFill);
+    setCurrentPieceColor(nextColor);
     getNextStockedPiece();
   }
 
+
+
+  const fallPiece = () => {
+    
+  const newCells = currentPieceCells.map(id => {
+    const cell = field.flat().find(c => c.id === id);
+    return `${cell.rowId + 1}.${cell.colId}`;
+  });
+
+  const newField = field.map(row =>
+    row.map(cell => {
+      
+      if (newCells.includes(cell.id)) {
+        return { ...cell, isFilled: true, color: currentPieceColor };
+      }
+
+      if (currentPieceCells.includes(cell.id)) {
+        return { ...cell, isFilled: false, color: "" };
+      }
+
+      return cell;
+    })
+  );
+
+  setField(newField);
+  setCurrentPieceCells(newCells);
+};
 
   useEffect(() => {
     setField(generateField());
@@ -88,6 +120,7 @@ function TetrisManager() {
   return (
     <>
       <button onClick={() => spawnPiece(nextPiece)}>spawn piece</button>
+      <button onClick={() => fallPiece()}>fall piece</button>
       {/* <LeftMenu/> */}
       <TetrisField fieldData={field}/>
       <TetrisNext nextPiece={nextPiece} nextColor={nextColor} onNextClick={getNextStockedPiece}/>
