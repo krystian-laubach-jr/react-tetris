@@ -6,6 +6,7 @@ import TetrisField from './TetrisField';
 import TetrisNext from './TetrisNext';
 
 function TetrisManager() {
+  //field
   const [field, setField] = useState([]);
 
   const generateField = () => {
@@ -26,6 +27,12 @@ function TetrisManager() {
     return tempRowsArray
   }
 
+  useEffect(() => {
+    setField(generateField());
+    getNextStockedPiece();
+  }, []); //on mount
+
+  //pieces
   const colors = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple' ];
   const [nextColor, setNextColor] = useState();
 
@@ -39,11 +46,8 @@ function TetrisManager() {
     { name: 'line', coords: ['0.4', '1.4', '2.4', '3.4'] },
     { name: 'square', coords: ['0.4', '0.5', '1.4', '1.5'] }
   ];
-
-
-  const [nextPiece, setNextPiece] = useState();
-
   const [stockedPieces, setStockedPieces] = useState([]);
+  const [nextPiece, setNextPiece] = useState();
 
   const getNextStockedPiece = () => {
     let currentStockedPieces = [...stockedPieces];
@@ -82,8 +86,6 @@ function TetrisManager() {
     setCurrentPieceColor(nextColor);
     getNextStockedPiece();
   }
-
-
 
   const fallPiece = () => {
 
@@ -131,12 +133,6 @@ function TetrisManager() {
   setField(newField);
   setCurrentPieceCells(newCells);
 };
-
-  useEffect(() => {
-    setField(generateField());
-    getNextStockedPiece();
-  }, []); // runs only once on mount
-
 
   return (
     <>
