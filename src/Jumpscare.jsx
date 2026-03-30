@@ -1,19 +1,28 @@
-import { useEffect, useState } from "react";
-import jumpscareGif from "./assets/jumpscare.gif"; // adjust path if needed
+import { useEffect, useState, useRef } from "react";
+import jumpscareGif from "./assets/jumpscare.gif";
+
+const GIF_DURATION = 1100; // give browser some buffer
 
 export default function Jumpscare() {
   const [showGif, setShowGif] = useState(false);
+  const [gifKey, setGifKey] = useState(0);
+  const isPlayingRef = useRef(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const roll = Math.floor(Math.random() * 5);
+      if (isPlayingRef.current) return; // 🚫 prevent overlap
+
+      const roll = Math.floor(Math.random() * 10000);
 
       if (roll === 0) {
+        isPlayingRef.current = true;
+        setGifKey(Date.now());
         setShowGif(true);
 
         setTimeout(() => {
           setShowGif(false);
-        }, 840); // match your GIF duration (0.84s)
+          isPlayingRef.current = false;
+        }, GIF_DURATION);
       }
     }, 1000);
 
@@ -24,7 +33,12 @@ export default function Jumpscare() {
 
   return (
     <div style={styles.overlay}>
-      <img src={jumpscareGif} alt="jumpscare" style={styles.gif} />
+      <img
+        key={gifKey}
+        src={jumpscareGif}
+        alt="jumpscare"
+        style={styles.gif}
+      />
     </div>
   );
 }
@@ -32,18 +46,12 @@ export default function Jumpscare() {
 const styles = {
   overlay: {
     position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100vw",
-    height: "100vh",
-    backgroundColor: "black",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    inset: 0,
     zIndex: 9999,
   },
   gif: {
-    maxWidth: "100%",
-    maxHeight: "100%",
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
   },
 };
