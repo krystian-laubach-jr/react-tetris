@@ -1,0 +1,79 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 300px;
+  margin-right: 700px;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.btn {
+    padding: 16px;
+    width: 180px;
+    height: 30px;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+  background-color: gray;
+  font-family: minecraft;
+  font-size: 30px;
+}
+
+.btn:hover {
+  opacity: 0.3;
+}
+
+.button-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  border-spacing: 30px;
+}
+
+.guzikiborder{
+    background-color: gray;
+    padding: 50px;
+    border-radius: 25px;
+    border: 5px solid black;
+    
+}
+.container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-top: 100px; /* dostosuj w razie potrzeby */
+  margin-left: 100px;
+  gap: 50px; /* odstęp między guzikami a panelem */
+}
+
+.side-panel {
+  width: 300px;
+  padding: 20px;
+  background-color: gray;
+  color: white;
+  border-radius: 10px;
+  font-family: Arial, sans-serif;   
+}
+
+.side-panel h2 {
+  margin-bottom: 10px;
+}
+
+.side-panel p {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.tabliczka{
+    margin-left: 900px;
+    position: absolute;
+}
