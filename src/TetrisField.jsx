@@ -1,4 +1,4 @@
-import './TetrisField.css';
+import './styles/TetrisField.css';
 import { useEffect } from 'react';
 function TetrisField({fieldData, onCellClick}) {
 

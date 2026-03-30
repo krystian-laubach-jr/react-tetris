@@ -1,4 +1,4 @@
-import './TetrisNext.css';
+import './styles/TetrisNext.css';
 import BlockDisplay from './BlockDisplay';
 
 function TetrisNext({nextPiece, nextColor, onNextClick}) {

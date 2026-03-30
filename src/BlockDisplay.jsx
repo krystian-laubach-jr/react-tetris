@@ -1,4 +1,4 @@
-import './BlockDisplay.css';
+import './styles/BlockDisplay.css';
 function BlockDisplay({piece, color}) {
 
   return (

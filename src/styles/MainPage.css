@@ -50,9 +50,9 @@
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  margin-top: 100px; /* dostosuj w razie potrzeby */
+  margin-top: 100px;
   margin-left: 100px;
-  gap: 50px; /* odstęp między guzikami a panelem */
+  gap: 50px;
 }
 
 .side-panel {

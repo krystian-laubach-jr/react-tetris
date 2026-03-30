@@ -1,4 +1,4 @@
-import './LeftMenu.css';
+import './styles/LeftMenu.css';
 function LeftMenu() {
 
   return (
