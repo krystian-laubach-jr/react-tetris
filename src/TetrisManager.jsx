@@ -7,83 +7,91 @@ import TetrisNext from './TetrisNext';
 
 function TetrisManager() {
   const [field, setField] = useState([]);
+  const [nextPiece, setNextPiece] = useState(null);
+  const [stockedPieces, setStockedPieces] = useState([]);
+
+  const colors = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple'];
+
+  const pieces = ['z', 'rz', 'l', 'rl', 't', 'line', 'square'];
 
   const generateField = () => {
     let tempRowsArray = [];
-    for (let i=0; i < 20; i++) {
 
+    for (let i = 0; i < 20; i++) {
       let tempColsArray = [];
-      for (let j=0; j < 10; j++) {
-        tempColsArray.push(
-          {id:`${i}.${j}`, isFilled: false, color:""}
-        );
+
+      for (let j = 0; j < 10; j++) {
+        tempColsArray.push({
+          id: `${i}.${j}`,
+          isFilled: false,
+          color: ""
+        });
       }
 
       tempRowsArray.push(tempColsArray);
     }
-    
-    return tempRowsArray
-  }
+
+    return tempRowsArray;
+  };
 
   const toggleCellState = (idToToggle) => {
     const newField = field.map(row =>
       row.map(cell => {
         if (cell.id === idToToggle) {
-          if (cell.isFilled) {
-            return { ...cell, isFilled: false }
-          } else {
-            return { ...cell, isFilled: true }
-          }
-          
-        } else {
-          return cell
+          return { ...cell, isFilled: !cell.isFilled };
         }
-        }
-      )
+        return cell;
+      })
     );
 
     setField(newField);
-  }
+  };
 
-  const colors = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple' ];
-  const nextColor = colors[Math.floor(Math.random() * (7))]
-
-  const pieces = ['z', 'rz', 'l', 'rl', 't', 'line', 'square'];
-  const [nextPiece, setNextPiece] = useState();
-
-  const [stockedPieces, setStockedPieces] = useState([]);
+  const getRandomColor = () => {
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
 
   const getNextStockedPiece = () => {
-    let currentStockedPieces = [...stockedPieces];
-    let piecesLeft = currentStockedPieces.length;
+    let currentStock = [...stockedPieces];
 
-    if ( piecesLeft === 0) {
-      currentStockedPieces = pieces;
+    if (currentStock.length === 0) {
+      currentStock = [...pieces];
     }
 
-    let newNextPieceId = Math.floor(Math.random() * (piecesLeft));
-    let newNextPiece = currentStockedPieces[newNextPieceId];
-    let newStockedPieces = currentStockedPieces.filter((_, i) => i !== newNextPieceId);
+    const randomIndex = Math.floor(Math.random() * currentStock.length);
+    const newPiece = currentStock[randomIndex];
 
-    console.log('Next piece: ' + newNextPiece + ' remaining pieces: ' + newStockedPieces);
-    setStockedPieces(newStockedPieces);
-    setNextPiece(newNextPiece);
-  }
+    const newStock = currentStock.filter((_, i) => i !== randomIndex);
 
+    console.log('Next piece:', newPiece, 'remaining:', newStock);
 
+    setStockedPieces(newStock);
+    setNextPiece({
+      type: newPiece,
+      color: getRandomColor()
+    });
+  };
 
   useEffect(() => {
     setField(generateField());
-  }, []); // runs only once on mount
-
+    getNextStockedPiece();
+  }, []);
 
   return (
     <>
-      {/* <LeftMenu/> */}
-      <TetrisField fieldData={field} onCellClick={toggleCellState}/>
-      <TetrisNext nextPiece={nextPiece} nextColor={nextColor} onNextClick={getNextStockedPiece}/>
-    </>
+      {/* <LeftMenu /> */}
 
+      <TetrisField 
+        fieldData={field} 
+        onCellClick={toggleCellState}
+      />
+
+      <TetrisNext 
+        nextPiece={nextPiece?.type}
+        nextColor={nextPiece?.color}
+        onNextClick={getNextStockedPiece}
+      />
+    </>
   );
 }
 
