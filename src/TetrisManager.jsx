@@ -89,35 +89,105 @@ function TetrisManager() {
 
   const fallPiece = () => {
 
-  const isAtBottom = currentPieceCells.some(id => {
+    const isAtBottom = currentPieceCells.some(id => {
+      const cell = field.flat().find(c => c.id === id);
+      return cell.rowId === 19;
+    });
+
+    const isPieceUnder = currentPieceCells.some(id => {
+      const cell = field.flat().find(c => c.id === id);
+      const cellBelow = field[cell.rowId + 1]?.[cell.colId];
+
+      return (
+        cellBelow &&
+        cellBelow.isFilled &&
+        !currentPieceCells.includes(cellBelow.id)
+      );
+    });
+
+    if (isAtBottom || isPieceUnder) {
+      spawnPiece(nextPiece);
+      return
+    }
+
+    const newCells = currentPieceCells.map(id => {
+      const cell = field.flat().find(c => c.id === id);
+      return `${cell.rowId + 1}.${cell.colId}`;
+    });
+
+    const newField = field.map(row =>
+      row.map(cell => {
+        
+        if (newCells.includes(cell.id)) {
+          return { ...cell, isFilled: true, color: currentPieceColor };
+        }
+
+        if (currentPieceCells.includes(cell.id)) {
+          return { ...cell, isFilled: false, color: "" };
+        }
+
+        return cell;
+      })
+    );
+
+    setField(newField);
+    setCurrentPieceCells(newCells);
+};
+
+  const movePiece = (isToLeft) => {
+
+  const isAtLeftSide = currentPieceCells.some(id => {
     const cell = field.flat().find(c => c.id === id);
-    return cell.rowId === 19;
+    return cell.colId === 0;
   });
 
-  const isPieceUnder = currentPieceCells.some(id => {
+  const isAtRightSide = currentPieceCells.some(id => {
     const cell = field.flat().find(c => c.id === id);
-    const cellBelow = field[cell.rowId + 1]?.[cell.colId];
+    return cell.colId === 9;
+  });
+
+  const isPieceToLeft = currentPieceCells.some(id => {
+    const cell = field.flat().find(c => c.id === id);
+    const cellLeft = field[cell.rowId]?.[cell.colId - 1];
 
     return (
-      cellBelow &&
-      cellBelow.isFilled &&
-      !currentPieceCells.includes(cellBelow.id)
+      cellLeft &&
+      cellLeft.isFilled &&
+      !currentPieceCells.includes(cellLeft.id)
     );
   });
 
-  if (isAtBottom || isPieceUnder) {
-    spawnPiece(nextPiece);
-    return
-  }
-
-  const newCells = currentPieceCells.map(id => {
+  const isPieceToRight = currentPieceCells.some(id => {
     const cell = field.flat().find(c => c.id === id);
-    return `${cell.rowId + 1}.${cell.colId}`;
+    const cellRight = field[cell.rowId]?.[cell.colId + 1];
+
+    return (
+      cellRight &&
+      cellRight.isFilled &&
+      !currentPieceCells.includes(cellRight.id)
+    );
   });
+
+  let newCells = [];
+
+  if (isToLeft && !isAtLeftSide && !isPieceToLeft) {
+    newCells = currentPieceCells.map(id => {
+      const cell = field.flat().find(c => c.id === id);
+      return `${cell.rowId}.${cell.colId - 1}`;
+    });
+  } 
+  else if (!isToLeft && !isAtRightSide && !isPieceToRight) {
+    newCells = currentPieceCells.map(id => {
+      const cell = field.flat().find(c => c.id === id);
+      return `${cell.rowId}.${cell.colId + 1}`;
+    });
+  } 
+  else {
+    return;
+  }
 
   const newField = field.map(row =>
     row.map(cell => {
-      
       if (newCells.includes(cell.id)) {
         return { ...cell, isFilled: true, color: currentPieceColor };
       }
@@ -138,6 +208,9 @@ function TetrisManager() {
     <>
       <button onClick={() => spawnPiece(nextPiece)}>spawn piece</button>
       <button onClick={() => fallPiece()}>fall piece</button>
+
+      <button onClick={() => movePiece(true)}>left</button>
+      <button onClick={() => movePiece(false)}>right</button>
       {/* <LeftMenu/> */}
       <TetrisField fieldData={field}/>
       <TetrisNext nextPiece={nextPiece} nextColor={nextColor} onNextClick={getNextStockedPiece}/>
