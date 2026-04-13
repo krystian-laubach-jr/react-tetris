@@ -87,33 +87,61 @@ function TetrisManager() {
     getNextStockedPiece();
   }
 
-  const fallPiece = () => {
+  const fallPiece = (isDrop) => {
+    let newCells = []
 
-    const isAtBottom = currentPieceCells.some(id => {
+  const isAtBottom = (cellArray) => {
+    return cellArray.some(id => {
       const cell = field.flat().find(c => c.id === id);
-      return cell.rowId === 19;
+      if (!cell) return true; // treat as bottom
+      return cell.rowId >= 19;
     });
+  };
 
-    const isPieceUnder = currentPieceCells.some(id => {
+  const isPieceUnder = (cellArray) => {
+    return cellArray.some(id => {
       const cell = field.flat().find(c => c.id === id);
+      if (!cell) return false; // ✅ prevent crash
+
       const cellBelow = field[cell.rowId + 1]?.[cell.colId];
 
       return (
         cellBelow &&
         cellBelow.isFilled &&
-        !currentPieceCells.includes(cellBelow.id)
+        !cellArray.includes(cellBelow.id)
       );
     });
+  };
 
-    if (isAtBottom || isPieceUnder) {
+    if (isAtBottom(currentPieceCells) || isPieceUnder(currentPieceCells)) {
       spawnPiece(nextPiece);
       return
     }
 
-    const newCells = currentPieceCells.map(id => {
-      const cell = field.flat().find(c => c.id === id);
-      return `${cell.rowId + 1}.${cell.colId}`;
-    });
+    if (isDrop) {
+      newCells = currentPieceCells; // start from current position
+
+      while (true) {
+        // stop if current position can't move further
+        if (isAtBottom(newCells) || isPieceUnder(newCells)) {
+          break;
+        }
+
+        // otherwise move down
+        newCells = newCells.map(id => {
+          const cell = field.flat().find(c => c.id === id);
+          if (!cell) return null;
+
+          return `${cell.rowId + 1}.${cell.colId}`;
+        });
+      }
+    }
+    else {
+      newCells = currentPieceCells.map(id => {
+        const cell = field.flat().find(c => c.id === id);
+        return `${cell.rowId + 1}.${cell.colId}`;
+      });
+    }
 
     const newField = field.map(row =>
       row.map(cell => {
@@ -206,11 +234,22 @@ function TetrisManager() {
 
   return (
     <>
-      <button onClick={() => spawnPiece(nextPiece)}>spawn piece</button>
-      <button onClick={() => fallPiece()}>fall piece</button>
+      <div>
+        <div>
+          <button onClick={() => spawnPiece(nextPiece)}>spawn piece</button>
+          <button onClick={() => fallPiece()}>fall piece</button>
+        </div>
 
-      <button onClick={() => movePiece(true)}>left</button>
-      <button onClick={() => movePiece(false)}>right</button>
+        <div>
+          <button onClick={() => movePiece(true)}>left</button>
+          <button onClick={() => movePiece(false)}>right</button>
+        </div>
+
+        <div>
+          <button onClick={() => fallPiece(true)}>drop</button>
+        </div>
+      </div>
+
       {/* <LeftMenu/> */}
       <TetrisField fieldData={field}/>
       <TetrisNext nextPiece={nextPiece} nextColor={nextColor} onNextClick={getNextStockedPiece}/>
