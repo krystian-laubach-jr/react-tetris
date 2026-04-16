@@ -90,28 +90,28 @@ function TetrisManager() {
   const fallPiece = (isDrop) => {
     let newCells = []
 
-  const isAtBottom = (cellArray) => {
-    return cellArray.some(id => {
-      const cell = field.flat().find(c => c.id === id);
-      if (!cell) return true; // treat as bottom
-      return cell.rowId >= 19;
-    });
-  };
+    const isAtBottom = (cellArray) => {
+      return cellArray.some(id => {
+        const cell = field.flat().find(c => c.id === id);
+        if (!cell) return true; // treat as bottom
+        return cell.rowId >= 19;
+      });
+    };
 
-  const isPieceUnder = (cellArray) => {
-    return cellArray.some(id => {
-      const cell = field.flat().find(c => c.id === id);
-      if (!cell) return false; // ✅ prevent crash
+    const isPieceUnder = (cellArray) => {
+      return cellArray.some(id => {
+        const cell = field.flat().find(c => c.id === id);
+        if (!cell) return false; // ✅ prevent crash
 
-      const cellBelow = field[cell.rowId + 1]?.[cell.colId];
+        const cellBelow = field[cell.rowId + 1]?.[cell.colId];
 
-      return (
-        cellBelow &&
-        cellBelow.isFilled &&
-        !cellArray.includes(cellBelow.id)
-      );
-    });
-  };
+        return (
+          cellBelow &&
+          cellBelow.isFilled &&
+          !cellArray.includes(cellBelow.id)
+        );
+      });
+    };
 
     if (isAtBottom(currentPieceCells) || isPieceUnder(currentPieceCells)) {
       spawnPiece(nextPiece);
