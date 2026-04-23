@@ -5,30 +5,41 @@
   margin-top: 300px;
   margin-right: 700px;
 }
-
+body
 .button-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
-
+body{
+  background-image: url("../assets/tlo2.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 72%;
+  background-color: rgb(94, 94, 94);
+}
 .btn {
     padding: 16px;
-    width: 180px;
-    height: 30px;
+    width: 210px;
+    height: 70px;
   border: none;
   border-radius: 10px;
-  color: white;
+  color: purple;
   font-size: 16px;
   cursor: pointer;
   transition: 0.2s;
-  background-color: gray;
+  background-color:black;
   font-family: minecraft;
   font-size: 30px;
+  border: purple solid 3px;
+
+  
 }
 
 .btn:hover {
-  opacity: 0.3;
+  border-color: #af06af;
+  box-shadow: 0 0 10px #888888, 0 0 20px purple, 0 0 30px purple;
+  text-shadow: 0 0 10px #888888, 0 0 20px purple  , 0 0 30px purple;
 }
 
 .button-column {
@@ -38,27 +49,18 @@
   align-items: center;
   border-spacing: 30px;
 }
-
-.guzikiborder{
-    background-color: gray;
-    padding: 50px;
-    border-radius: 25px;
-    border: 5px solid black;
-    
-}
 .container {
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  margin-top: 100px;
-  margin-left: 100px;
+  margin-top: -130px;
+  margin-left: 700px;
   gap: 50px;
 }
 
 .side-panel {
   width: 300px;
   padding: 20px;
-  background-color: gray;
   color: white;
   border-radius: 10px;
   font-family: Arial, sans-serif;   
