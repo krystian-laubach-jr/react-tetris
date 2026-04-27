@@ -114,7 +114,6 @@ function TetrisManager() {
     };
 
     if (isAtBottom(currentPieceCells) || isPieceUnder(currentPieceCells)) {
-      spawnPiece(nextPiece);
       return
     }
 
@@ -160,7 +159,7 @@ function TetrisManager() {
 
     setField(newField);
     setCurrentPieceCells(newCells);
-};
+  };
 
   const movePiece = (isToLeft) => {
 
@@ -232,6 +231,28 @@ function TetrisManager() {
   setCurrentPieceCells(newCells);
 };
 
+  useEffect(() => {
+  const handleKeyDown = (event) => {
+    console.log(`Key pressed: ${event.key}`);
+
+    if (event.key === 'ArrowLeft') {
+      movePiece(true); // Move left
+    } else if (event.key === 'ArrowRight') {
+      movePiece(false); // Move right
+    } else if (event.key === 'ArrowDown') {
+      fallPiece(); // Fall piece
+    } else if (event.key === ' ') {
+      fallPiece(true); // Drop piece
+    }
+  };
+
+  window.addEventListener('keydown', handleKeyDown);
+
+  return () => {
+    window.removeEventListener('keydown', handleKeyDown);
+  };
+}, [fallPiece, movePiece]);
+
   return (
     <>
       <div>
@@ -259,3 +280,10 @@ function TetrisManager() {
 }
 
 export default TetrisManager;
+
+//todo:
+//left menu
+//usuwanie linii
+//rotate
+//hold
+//ghost piece
