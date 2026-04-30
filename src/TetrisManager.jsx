@@ -4,6 +4,7 @@ import { useState, useEffect, use } from 'react';
 import LeftMenu from './LeftMenu';
 import TetrisField from './TetrisField';
 import TetrisNext from './TetrisNext';
+import TetrisHeld from './TetrisHeld';
 
 function TetrisManager() {
   //field
@@ -67,22 +68,27 @@ function TetrisManager() {
     setNextColor(colors[Math.floor(Math.random() * (7))])
   }
 
+  const [currentPiece, setCurrentPiece] = useState();
   const [currentPieceCells, setCurrentPieceCells] = useState([]);
   const [currentPieceColor, setCurrentPieceColor] = useState("")
 
+  const [heldPiece, setHeldPiece] = useState([]);
+  const [heldPieceColor, setHeldPieceColor] = useState("")
+
   const spawnPiece = (piece) => {
-    const cellsToFill = pieceStartingCells.find(p => p.name === piece).coords;
-
-    const newField = field.map(row =>
-      row.map(cell =>
-      cellsToFill.includes(cell.id)
-        ? { ...cell, isFilled: true, color: nextColor }
-        : cell
-      )
-    );
-
-    setField(newField);
-    setCurrentPieceCells(cellsToFill);
+    setField((oldField) => {
+      const cellsToFill = pieceStartingCells.find(p => p.name === piece).coords;
+      const newField = oldField.map(row =>
+        row.map(cell =>
+        cellsToFill.includes(cell.id)
+          ? { ...cell, isFilled: true, color: nextColor }
+          : cell
+        )
+      );
+      setCurrentPieceCells(cellsToFill);
+      return newField;
+    });
+    setCurrentPiece(piece)
     setCurrentPieceColor(nextColor);
     getNextStockedPiece();
   }
@@ -142,94 +148,120 @@ function TetrisManager() {
       });
     }
 
-    const newField = field.map(row =>
-      row.map(cell => {
-        
-        if (newCells.includes(cell.id)) {
-          return { ...cell, isFilled: true, color: currentPieceColor };
-        }
+    setField(field => {
+      const newField = field.map(row =>
+        row.map(cell => {
+          
+          if (newCells.includes(cell.id)) {
+            return { ...cell, isFilled: true, color: currentPieceColor };
+          }
 
-        if (currentPieceCells.includes(cell.id)) {
-          return { ...cell, isFilled: false, color: "" };
-        }
+          if (currentPieceCells.includes(cell.id)) {
+            return { ...cell, isFilled: false, color: "" };
+          }
 
-        return cell;
-      })
-    );
+          return cell;
+        })
+      );
 
-    setField(newField);
+      return newField;
+    });
+    
     setCurrentPieceCells(newCells);
+    if(isDrop) spawnPiece(nextPiece);
   };
 
   const movePiece = (isToLeft) => {
 
-  const isAtLeftSide = currentPieceCells.some(id => {
-    const cell = field.flat().find(c => c.id === id);
-    return cell.colId === 0;
-  });
-
-  const isAtRightSide = currentPieceCells.some(id => {
-    const cell = field.flat().find(c => c.id === id);
-    return cell.colId === 9;
-  });
-
-  const isPieceToLeft = currentPieceCells.some(id => {
-    const cell = field.flat().find(c => c.id === id);
-    const cellLeft = field[cell.rowId]?.[cell.colId - 1];
-
-    return (
-      cellLeft &&
-      cellLeft.isFilled &&
-      !currentPieceCells.includes(cellLeft.id)
-    );
-  });
-
-  const isPieceToRight = currentPieceCells.some(id => {
-    const cell = field.flat().find(c => c.id === id);
-    const cellRight = field[cell.rowId]?.[cell.colId + 1];
-
-    return (
-      cellRight &&
-      cellRight.isFilled &&
-      !currentPieceCells.includes(cellRight.id)
-    );
-  });
-
-  let newCells = [];
-
-  if (isToLeft && !isAtLeftSide && !isPieceToLeft) {
-    newCells = currentPieceCells.map(id => {
+    const isAtLeftSide = currentPieceCells.some(id => {
       const cell = field.flat().find(c => c.id === id);
-      return `${cell.rowId}.${cell.colId - 1}`;
+      return cell.colId === 0;
     });
-  } 
-  else if (!isToLeft && !isAtRightSide && !isPieceToRight) {
-    newCells = currentPieceCells.map(id => {
+
+    const isAtRightSide = currentPieceCells.some(id => {
       const cell = field.flat().find(c => c.id === id);
-      return `${cell.rowId}.${cell.colId + 1}`;
+      return cell.colId === 9;
     });
-  } 
-  else {
-    return;
-  }
 
-  const newField = field.map(row =>
-    row.map(cell => {
-      if (newCells.includes(cell.id)) {
-        return { ...cell, isFilled: true, color: currentPieceColor };
-      }
+    const isPieceToLeft = currentPieceCells.some(id => {
+      const cell = field.flat().find(c => c.id === id);
+      const cellLeft = field[cell.rowId]?.[cell.colId - 1];
 
-      if (currentPieceCells.includes(cell.id)) {
-        return { ...cell, isFilled: false, color: "" };
-      }
+      return (
+        cellLeft &&
+        cellLeft.isFilled &&
+        !currentPieceCells.includes(cellLeft.id)
+      );
+    });
 
-      return cell;
-    })
-  );
+    const isPieceToRight = currentPieceCells.some(id => {
+      const cell = field.flat().find(c => c.id === id);
+      const cellRight = field[cell.rowId]?.[cell.colId + 1];
 
-  setField(newField);
-  setCurrentPieceCells(newCells);
-};
+      return (
+        cellRight &&
+        cellRight.isFilled &&
+        !currentPieceCells.includes(cellRight.id)
+      );
+    });
+
+    let newCells = [];
+
+    if (isToLeft && !isAtLeftSide && !isPieceToLeft) {
+      newCells = currentPieceCells.map(id => {
+        const cell = field.flat().find(c => c.id === id);
+        return `${cell.rowId}.${cell.colId - 1}`;
+      });
+    } 
+    else if (!isToLeft && !isAtRightSide && !isPieceToRight) {
+      newCells = currentPieceCells.map(id => {
+        const cell = field.flat().find(c => c.id === id);
+        return `${cell.rowId}.${cell.colId + 1}`;
+      });
+    } 
+    else {
+      return;
+    }
+
+    setField(field => {
+      const newField = field.map(row =>
+        row.map(cell => {
+          if (newCells.includes(cell.id)) {
+            return { ...cell, isFilled: true, color: currentPieceColor };
+          }
+
+          if (currentPieceCells.includes(cell.id)) {
+            return { ...cell, isFilled: false, color: "" };
+          }
+
+          return cell;
+        })
+      );
+      return newField;
+    });
+    
+    setCurrentPieceCells(newCells);
+  };
+
+  const holdPiece = () => {
+    setHeldPiece(currentPiece)
+    setHeldPieceColor(currentPieceColor)
+
+    setField(field => {
+      const newField = field.map(row =>
+        row.map(cell => {
+          if (currentPieceCells.includes(cell.id)) {
+            return { ...cell, isFilled: false, color: "" };
+          }
+          return cell;
+        })
+      );
+
+      return newField;
+    });
+    
+    spawnPiece(nextPiece)
+ }
 
   useEffect(() => {
   const handleKeyDown = (event) => {
@@ -243,6 +275,8 @@ function TetrisManager() {
       fallPiece(); // Fall piece
     } else if (event.key === ' ') {
       fallPiece(true); // Drop piece
+    }  else if (event.key === 'c') {
+      holdPiece(); // Hold piece
     }
   };
 
@@ -251,7 +285,7 @@ function TetrisManager() {
   return () => {
     window.removeEventListener('keydown', handleKeyDown);
   };
-}, [fallPiece, movePiece]);
+}, [fallPiece, movePiece, holdPiece]);
 
   return (
     <>
@@ -268,10 +302,12 @@ function TetrisManager() {
 
         <div>
           <button onClick={() => fallPiece(true)}>drop</button>
+          <button onClick={() => holdPiece(true)}>hold</button>
         </div>
       </div>
 
       {/* <LeftMenu/> */}
+      <TetrisHeld heldPiece={heldPiece} heldColor={heldPieceColor}/>
       <TetrisField fieldData={field}/>
       <TetrisNext nextPiece={nextPiece} nextColor={nextColor} onNextClick={getNextStockedPiece}/>
     </>
