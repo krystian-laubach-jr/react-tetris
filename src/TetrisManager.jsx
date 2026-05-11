@@ -72,25 +72,33 @@ function TetrisManager() {
   const [currentPieceCells, setCurrentPieceCells] = useState([]);
   const [currentPieceColor, setCurrentPieceColor] = useState("")
 
+  const [canHoldPiece, setCanHoldPiece] = useState(true)
+  const [isPieceHeld, setIsPieceHeld] = useState(false);
   const [heldPiece, setHeldPiece] = useState([]);
   const [heldPieceColor, setHeldPieceColor] = useState("")
 
-  const spawnPiece = (piece) => {
+  const spawnPiece = (piece, color) => {
     setField((oldField) => {
       const cellsToFill = pieceStartingCells.find(p => p.name === piece).coords;
       const newField = oldField.map(row =>
         row.map(cell =>
         cellsToFill.includes(cell.id)
-          ? { ...cell, isFilled: true, color: nextColor }
+          ? { ...cell, isFilled: true, color: color }
           : cell
         )
       );
       setCurrentPieceCells(cellsToFill);
       return newField;
     });
+
     setCurrentPiece(piece)
-    setCurrentPieceColor(nextColor);
-    getNextStockedPiece();
+    setCurrentPieceColor(color);
+  }
+
+  const spawnNextPiece = () => {
+    spawnPiece(nextPiece, nextColor)
+    getNextStockedPiece()
+    setCanHoldPiece(true)
   }
 
   const fallPiece = (isDrop) => {
@@ -168,7 +176,7 @@ function TetrisManager() {
     });
     
     setCurrentPieceCells(newCells);
-    if(isDrop) spawnPiece(nextPiece);
+    if(isDrop) spawnNextPiece();
   };
 
   const movePiece = (isToLeft) => {
@@ -244,6 +252,8 @@ function TetrisManager() {
   };
 
   const holdPiece = () => {
+    if(!canHoldPiece){ return }
+
     setHeldPiece(currentPiece)
     setHeldPieceColor(currentPieceColor)
 
@@ -260,8 +270,16 @@ function TetrisManager() {
       return newField;
     });
     
-    spawnPiece(nextPiece)
- }
+    if( !isPieceHeld) {
+      spawnPiece(nextPiece, nextColor)
+      setIsPieceHeld(true)
+    }
+
+    if (isPieceHeld) {
+      spawnPiece(heldPiece, heldPieceColor)
+    }
+    setCanHoldPiece(false)
+  }
 
   useEffect(() => {
   const handleKeyDown = (event) => {
@@ -291,7 +309,7 @@ function TetrisManager() {
     <>
       <div>
         <div>
-          <button onClick={() => spawnPiece(nextPiece)}>spawn piece</button>
+          <button onClick={() => spawnNextPiece()}>spawn piece</button>
           <button onClick={() => fallPiece()}>fall piece</button>
         </div>
 
@@ -318,8 +336,11 @@ function TetrisManager() {
 export default TetrisManager;
 
 //todo:
+
 //left menu
+
 //usuwanie linii
+
 //rotate
-//hold
+
 //ghost piece
