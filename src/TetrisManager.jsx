@@ -128,6 +128,7 @@ function TetrisManager() {
     };
 
     if (isAtBottom(currentPieceCells) || isPieceUnder(currentPieceCells)) {
+      spawnNextPiece();
       return
     }
 
@@ -281,6 +282,52 @@ function TetrisManager() {
     setCanHoldPiece(false)
   }
 
+  const clear = () => {
+    setField(oldField => {
+        // keep rows that are NOT full
+        let remainingRows = oldField.filter(row =>
+          row.some(cell => !cell.isFilled)
+        );
+
+        // how many rows were removed
+        const clearedLines = 20 - remainingRows.length;
+
+        // create new empty rows at the top
+        const newRows = [];
+
+        for (let i = 0; i < clearedLines; i++) {
+          let newRow = [];
+
+          for (let j = 0; j < 10; j++) {
+            newRow.push({
+              rowId: i,
+              colId: j,
+              id: `${i}.${j}`,
+              isFilled: false,
+              color: ""
+            });
+          }
+
+          newRows.push(newRow);
+        }
+
+        // combine new rows + remaining rows
+        const rebuiltField = [...newRows, ...remainingRows];
+
+        // rebuild ALL ids/rowIds so coordinates stay correct
+        const correctedField = rebuiltField.map((row, rowIndex) =>
+          row.map((cell, colIndex) => ({
+            ...cell,
+            rowId: rowIndex,
+            colId: colIndex,
+            id: `${rowIndex}.${colIndex}`
+          }))
+        );
+
+        return correctedField;
+    });
+  }
+
   useEffect(() => {
   const handleKeyDown = (event) => {
     console.log(`Key pressed: ${event.key}`);
@@ -322,6 +369,10 @@ function TetrisManager() {
           <button onClick={() => fallPiece(true)}>drop</button>
           <button onClick={() => holdPiece(true)}>hold</button>
         </div>
+
+        <div>
+          <button onClick={() => clear()}>clear</button>
+        </div>
       </div>
 
       {/* <LeftMenu/> */}
@@ -344,3 +395,5 @@ export default TetrisManager;
 //rotate
 
 //ghost piece
+
+//blockout
