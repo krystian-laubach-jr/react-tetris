@@ -41,8 +41,8 @@ main {
 }
 
 @font-face {
-  font-family: minecraft;
   src: url('../assets/Minecraft.ttf');
+  font-family: minecraft;
 }
 
 .brick {
