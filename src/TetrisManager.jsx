@@ -90,6 +90,7 @@ function TetrisManager() {
 
   const spawnPiece = (piece, color, existingField = null) => {
     if (!piece || !color) return;
+    if (checkBlockOut(piece)) return;
 
     setField((oldField) => {
       const baseField = existingField || oldField;
@@ -334,6 +335,18 @@ function TetrisManager() {
     setField(correctedField);           // update state to trigger re-render
   };
 
+  const checkBlockOut = (piece) => {
+    const cellsToFill = pieceStartingCells.find(p => p.name === piece).coords;
+    const isBlockedOut = cellsToFill.some(id =>
+      fieldRef.current.flat().find(c => c.id === id)?.isFilled
+    );
+    if (isBlockedOut) {
+      alert("Game Over!");
+    }
+    return isBlockedOut;
+  };
+
+  //Keyboard controls
   useEffect(() => {
   const handleKeyDown = (event) => {
     console.log(`Key pressed: ${event.key}`);
@@ -363,10 +376,11 @@ function TetrisManager() {
   };
 }, [fallPiece, movePiece, holdPiece]);
 
-  // Game loop — empty deps safe because fallPiece reads from refs
+  // Game loop
   useEffect(() => {
     const interval = setInterval(() => {
       if (currentPieceCellsRef.current.length === 0) return; // don't tick if no active piece
+      console.log("fall pice");
       fallPiece();
     }, 800);
 
