@@ -394,9 +394,6 @@ function TetrisManager() {
     window.removeEventListener('keydown', handleKeyDown);
   };
 }, [fallPiece, movePiece, holdPiece]);
-    setField(generateField());
-    getNextStockedPiece();
-  }, []);
 
   return (
     <>
