@@ -32,6 +32,12 @@ function TetrisManager() {
     setField(initialField);
     fieldRef.current = initialField;
     getNextStockedPiece();
+    spawnPiece(
+    pieces[Math.floor(Math.random() * pieces.length)],
+    colors[Math.floor(Math.random() * colors.length)],
+    initialField // pass it directly so spawnPiece doesn't rely on stale state
+  );
+
   }, []);
 
   //pieces
@@ -82,8 +88,11 @@ function TetrisManager() {
   const currentPieceColorRef = useRef("");
   const fieldRef = useRef([]);
 
-  const spawnPiece = (piece, color) => {
+  const spawnPiece = (piece, color, existingField = null) => {
+    if (!piece || !color) return;
+
     setField((oldField) => {
+      const baseField = existingField || oldField;
       const cellsToFill = pieceStartingCells.find(p => p.name === piece).coords;
       const newField = oldField.map(row =>
         row.map(cell =>
@@ -339,7 +348,12 @@ function TetrisManager() {
       fallPiece(true); // Drop piece
     }  else if (event.key === 'c') {
       holdPiece(); // Hold piece
+    } else if (event.key === 'r') {
+      window.location.reload(true);
     }
+
+    
+
   };
 
   window.addEventListener('keydown', handleKeyDown);
