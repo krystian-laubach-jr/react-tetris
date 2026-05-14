@@ -1,9 +1,5 @@
 import './styles/App.css';
 import { useState, useEffect, use } from 'react';
-import './styles/App.css';
-import { useState, useEffect } from 'react';
-
-import LeftMenu from './LeftMenu';
 import TetrisField from './TetrisField';
 import TetrisNext from './TetrisNext';
 import TetrisHeld from './TetrisHeld';
@@ -86,22 +82,18 @@ function TetrisManager() {
   };
 
   const getNextStockedPiece = () => {
-    let currentStock = [...stockedPieces];
+  let currentStock = [...stockedPieces];
+  if (currentStock.length === 0) currentStock = [...pieces];
 
-    if (currentStock.length === 0) {
-      currentStock = [...pieces];
-    }
+  const randomIndex = Math.floor(Math.random() * currentStock.length);
+  const newPiece = currentStock[randomIndex];
+  const newStock = currentStock.filter((_, i) => i !== randomIndex);
 
-    const randomIndex = Math.floor(Math.random() * currentStock.length);
-    const newPiece = currentStock[randomIndex];
-
-    const newStock = currentStock.filter((_, i) => i !== randomIndex);
-
-    console.log('Next piece: ' + newNextPiece + ' remaining pieces: ' + newStockedPieces);
-    setStockedPieces(newStockedPieces);
-    setNextPiece(newNextPiece);
-    setNextColor(colors[Math.floor(Math.random() * (7))])
-  }
+  console.log('Next piece:', newPiece, 'remaining:', newStock);
+  setStockedPieces(newStock);
+  setNextPiece(newPiece);
+  setNextColor(colors[Math.floor(Math.random() * colors.length)]);
+};
 
   const [currentPiece, setCurrentPiece] = useState();
   const [currentPieceCells, setCurrentPieceCells] = useState([]);
