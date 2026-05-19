@@ -341,10 +341,15 @@ function TetrisManager() {
       fieldRef.current.flat().find(c => c.id === id)?.isFilled
     );
     if (isBlockedOut) {
-      alert("Game Over!");
+      blockOut();
     }
     return isBlockedOut;
   };
+
+  const blockOut = () => {
+    alert("Game Over!");
+    window.location.reload(true);
+  }
 
   //Keyboard controls
   useEffect(() => {
