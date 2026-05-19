@@ -17,7 +17,7 @@ function TetrisManager() {
       let tempColsArray = [];
       for (let j=0; j < 10; j++) {
         tempColsArray.push(
-          {rowId:i, colId:j, id:`${i}.${j}`, isFilled: false, color:""}
+          {rowId:i, colId:j, id:`${i}.${j}`, isFilled: false, isGhost: false, color:""}
         );
       }
 
