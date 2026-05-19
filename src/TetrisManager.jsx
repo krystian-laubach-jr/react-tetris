@@ -6,7 +6,7 @@ import TetrisNext from './TetrisNext';
 import TetrisHeld from './TetrisHeld';
 
 function TetrisManager() {
-  //field
+  //#region field
   const [field, setField] = useState([]);
 
   const generateField = () => {
@@ -26,7 +26,10 @@ function TetrisManager() {
     console.log(tempRowsArray)
     return tempRowsArray
   }
+  //#endregion
 
+
+  //#region init
   useEffect(() => {
     const initialField = generateField();
     setField(initialField);
@@ -35,12 +38,14 @@ function TetrisManager() {
     spawnPiece(
     pieces[Math.floor(Math.random() * pieces.length)],
     colors[Math.floor(Math.random() * colors.length)],
-    initialField // pass it directly so spawnPiece doesn't rely on stale state
+    initialField
   );
 
   }, []);
+  //#endregion
 
-  //pieces
+
+  //#region piece and color consts
   const colors = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple' ];
   const [nextColor, setNextColor] = useState();
 
@@ -57,6 +62,23 @@ function TetrisManager() {
   const [stockedPieces, setStockedPieces] = useState([]);
   const [nextPiece, setNextPiece] = useState();
 
+
+  const [currentPiece, setCurrentPiece] = useState();
+  const [currentPieceCells, setCurrentPieceCells] = useState([]);
+  const [currentPieceColor, setCurrentPieceColor] = useState("")
+
+  const [canHoldPiece, setCanHoldPiece] = useState(true)
+  const [isPieceHeld, setIsPieceHeld] = useState(false);
+  const [heldPiece, setHeldPiece] = useState([]);
+  const [heldPieceColor, setHeldPieceColor] = useState("")
+
+  const currentPieceCellsRef = useRef([]);
+  const currentPieceColorRef = useRef("");
+  const fieldRef = useRef([]);
+  //#endregion
+
+
+  //#region piece spawning
   const getNextStockedPiece = () => {
     let currentStockedPieces = [...stockedPieces];
     let piecesLeft = currentStockedPieces.length;
@@ -74,19 +96,6 @@ function TetrisManager() {
     setNextPiece(newNextPiece);
     setNextColor(colors[Math.floor(Math.random() * (7))])
   }
-
-  const [currentPiece, setCurrentPiece] = useState();
-  const [currentPieceCells, setCurrentPieceCells] = useState([]);
-  const [currentPieceColor, setCurrentPieceColor] = useState("")
-
-  const [canHoldPiece, setCanHoldPiece] = useState(true)
-  const [isPieceHeld, setIsPieceHeld] = useState(false);
-  const [heldPiece, setHeldPiece] = useState([]);
-  const [heldPieceColor, setHeldPieceColor] = useState("")
-
-  const currentPieceCellsRef = useRef([]);
-  const currentPieceColorRef = useRef("");
-  const fieldRef = useRef([]);
 
   const spawnPiece = (piece, color, existingField = null) => {
     if (!piece || !color) return;
@@ -118,7 +127,10 @@ function TetrisManager() {
     getNextStockedPiece()
     setCanHoldPiece(true)
   }
+  //#endregion
 
+
+  //#region moving pieces
   const fallPiece = (isDrop) => {
     const cells = currentPieceCellsRef.current;
     const color = currentPieceColorRef.current;
@@ -270,7 +282,10 @@ function TetrisManager() {
     setField(newField);                       
     setCurrentPieceCells(newCells);
   };
+  //#endregion
 
+
+  //#region other game logic
   const holdPiece = () => {
     if(!canHoldPiece){ return }
 
@@ -334,22 +349,26 @@ function TetrisManager() {
     fieldRef.current = correctedField; // sync field ref so interval works with the cleared board
     setField(correctedField);           // update state to trigger re-render
   };
+  //#endregion
 
-  const checkBlockOut = (piece) => {
-    const cellsToFill = pieceStartingCells.find(p => p.name === piece).coords;
-    const isBlockedOut = cellsToFill.some(id =>
-      fieldRef.current.flat().find(c => c.id === id)?.isFilled
-    );
-    if (isBlockedOut) {
-      blockOut();
-    }
-    return isBlockedOut;
-  };
+
+  //#region blockout
+const checkBlockOut = (piece) => {
+  const cellsToFill = pieceStartingCells.find(p => p.name === piece).coords;
+  const isBlockedOut = cellsToFill.some(id =>
+    fieldRef.current.flat().find(c => c.id === id)?.isFilled
+  );
+  if (isBlockedOut) {
+    blockOut();
+  }
+  return isBlockedOut;
+};
 
   const blockOut = () => {
     alert("Game Over!");
     window.location.reload(true);
   }
+  //#endregion
 
   //Keyboard controls
   useEffect(() => {
@@ -381,6 +400,7 @@ function TetrisManager() {
   };
 }, [fallPiece, movePiece, holdPiece]);
 
+
   // Game loop
   useEffect(() => {
     const interval = setInterval(() => {
@@ -391,6 +411,7 @@ function TetrisManager() {
 
     return () => clearInterval(interval);
   }, [fallPiece]);
+
 
   return (
     <>
@@ -427,12 +448,10 @@ export default TetrisManager;
 
 //todo:
 
-//left menu
-
-//usuwanie linii
+//punkty
 
 //rotate
 
-//ghost piece
+//ghost piece (optional)
 
 //blockout
