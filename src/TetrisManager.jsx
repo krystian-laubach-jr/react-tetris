@@ -112,9 +112,10 @@ function TetrisManager() {
         )
       );
       fieldRef.current = newField;
-      setCurrentPieceCells(cellsToFill);
       currentPieceCellsRef.current = cellsToFill;
-      return newField;
+      setCurrentPieceCells(cellsToFill);
+      updateGhostPiece(currentPieceCellsRef.current, fieldRef.current); // pass refs so ghost always has latest values
+      return newField; // still need to return for setField callback
     });
 
     setCurrentPiece(piece)
@@ -203,8 +204,8 @@ function TetrisManager() {
     
     fieldRef.current = newField;
     currentPieceCellsRef.current = newCells;
-    setField(newField);
     setCurrentPieceCells(newCells);
+    updateGhostPiece(currentPieceCellsRef.current, fieldRef.current); // pass refs so ghost always has latest values
 
     if(isDrop) {
       clear()
@@ -277,10 +278,10 @@ function TetrisManager() {
     })
   );
 
-    fieldRef.current = newField;             // sync field ref before setField so next read is fresh
-    currentPieceCellsRef.current = newCells; // sync cells ref so next interval tick or keypress sees new position
-    setField(newField);                       
+    fieldRef.current = newField;
+    currentPieceCellsRef.current = newCells;
     setCurrentPieceCells(newCells);
+    updateGhostPiece(currentPieceCellsRef.current, fieldRef.current); // pass refs so ghost always has latest values
   };
   //#endregion
 
@@ -349,6 +350,46 @@ function TetrisManager() {
     fieldRef.current = correctedField; // sync field ref so interval works with the cleared board
     setField(correctedField);           // update state to trigger re-render
   };
+
+  const updateGhostPiece = (liveCells, currentField) => {
+  let ghostCells = liveCells;
+
+  const isAtBottom = (cellArray) => {
+    return cellArray.some(id => {
+      const cell = currentField.flat().find(c => c.id === id);
+      if (!cell) return true;
+      return cell.rowId >= 19;
+    });
+  };
+
+  const isPieceUnder = (cellArray) => {
+    return cellArray.some(id => {
+      const cell = currentField.flat().find(c => c.id === id);
+      if (!cell) return false;
+      const cellBelow = currentField[cell.rowId + 1]?.[cell.colId];
+      return cellBelow && cellBelow.isFilled && !liveCells.includes(cellBelow.id); // use liveCells not cellArray so ghost doesn't block itself
+    });
+  };
+
+  while (!isAtBottom(ghostCells) && !isPieceUnder(ghostCells)) {
+    ghostCells = ghostCells.map(id => {
+      const cell = currentField.flat().find(c => c.id === id);
+      return `${cell.rowId + 1}.${cell.colId}`;
+    });
+  }
+
+  const newField = currentField.map(row =>
+    row.map(cell => {
+      if (ghostCells.includes(cell.id) && !liveCells.includes(cell.id))
+        return { ...cell, isGhost: true };
+      return { ...cell, isGhost: false }; // clear old ghost cells
+    })
+  );
+
+  fieldRef.current = newField;           // sync ref so next interval/keypress reads field with ghost applied
+  setField(newField);
+};
+
   //#endregion
 
 

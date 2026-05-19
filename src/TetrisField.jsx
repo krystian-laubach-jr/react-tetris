@@ -37,7 +37,7 @@ function TetrisField({fieldData}) {
               <div className='fieldGridCell' key={cell.id}>
                 {/* <p>{cell.id}</p> */}
                 {cell.isFilled && <div className={`brick ${cell.color}`}></div>}
-                {cell.isGhost && <div className={`brick ${cell.color}`}></div>}
+                {cell.isGhost && <div className={`brick ${cell.color} ghost`}></div>}
               </div>
             ))}
           </div>
