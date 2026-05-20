@@ -1,0 +1,91 @@
+#leaderboardPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  font-family: minecraft, monospace;
+  padding: 3rem 1rem;
+  width: 100%;
+  min-height: 100vh;
+  background: black;
+}
+
+#leaderboardTitle {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin: 0 0 2rem 0;
+  color: yellow;
+  letter-spacing: 0.05em;
+}
+
+#leaderboardTable {
+  border-collapse: collapse;
+  width: min(580px, 92vw);
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+}
+
+#leaderboardTable th {
+  padding: 0.75rem 1.5rem;
+  background: #1a1a1a;
+  color: #888;
+  border: 2px solid #333;
+  font-weight: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.85em;
+}
+
+#leaderboardTable td {
+  padding: 0.75rem 1.5rem;
+  text-align: center;
+  border: 1px solid #2a2a2a;
+}
+
+#leaderboardTable tbody tr {
+  background: #0d0d0d;
+  transition: background 0.15s;
+}
+
+#leaderboardTable tbody tr:hover {
+  background: #1a1a1a;
+}
+
+.gold td   { color: gold; }
+.silver td { color: silver; }
+.bronze td { color: #cd7f32; }
+
+#noScores {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 3rem 0;
+}
+
+#leaderboardActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.lbBtn {
+  padding: 0.7rem 1.6rem;
+  font-family: minecraft, monospace;
+  font-size: 1rem;
+  background: #1a1a1a;
+  color: white;
+  border: 2px solid #555;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.lbBtn:hover {
+  background: #333;
+}
+
+.lbBtn.danger {
+  border-color: #cc3333;
+  color: #cc3333;
+}
+
+.lbBtn.danger:hover {
+  background: #1a0000;
+}

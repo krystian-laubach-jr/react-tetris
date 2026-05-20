@@ -1,0 +1,99 @@
+#gameOverOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+#gameOverModal {
+  background: #111;
+  border: 3px solid #444;
+  border-radius: 14px;
+  padding: 2.5rem 3rem;
+  text-align: center;
+  color: white;
+  font-family: minecraft, monospace;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  min-width: 320px;
+}
+
+#gameOverModal h1 {
+  margin: 0;
+  font-size: 2.8rem;
+  color: red;
+  text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+}
+
+.finalScore {
+  font-size: 1.4rem;
+  margin: 0;
+  color: #ccc;
+}
+
+.finalScore span {
+  color: yellow;
+  font-size: 1.8rem;
+}
+
+.saveRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+#gameOverModal input {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  font-family: minecraft, monospace;
+  background: #222;
+  border: 2px solid #555;
+  border-radius: 6px;
+  color: white;
+}
+
+#gameOverModal input:focus {
+  outline: none;
+  border-color: yellow;
+}
+
+.modalBtns {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.modalBtn {
+  padding: 0.6rem 1.4rem;
+  font-family: minecraft, monospace;
+  font-size: 0.95rem;
+  background: #2a2a2a;
+  color: white;
+  border: 2px solid #555;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.modalBtn:hover {
+  background: #444;
+}
+
+.modalBtn.accent {
+  border-color: yellow;
+  color: yellow;
+}
+
+.modalBtn.accent:hover {
+  background: #333;
+}
+
+.savedMsg {
+  color: lightgreen;
+  font-size: 1.1rem;
+  margin: 0;
+}

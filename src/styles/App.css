@@ -1,3 +1,11 @@
+
+html, body {
+  overflow: hidden;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   padding: 0;
   margin: 0;
@@ -6,16 +14,68 @@ body {
 main {
   width: 100vw;
   height: 100vh;
-
+  overflow: hidden;
+  background: black;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-evenly;  
+  justify-content: space-evenly;
 }
 
+/* Menu główne */
+#menuMain {
+  flex-direction: column;
+  gap: 3rem;
+  background: black;
+}
+
+#menuTitle {
+  font-family: minecraft, monospace;
+  font-size: clamp(3rem, 10vw, 7rem);
+  color: yellow;
+  margin: 0;
+  letter-spacing: 0.1em;
+  text-shadow: 4px 4px 0 #b8a000;
+}
+
+#menuButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.menuBtn {
+  width: 220px;
+  padding: 0.9rem 0;
+  font-family: minecraft, monospace;
+  font-size: 1.3rem;
+  background: #1a1a1a;
+  color: white;
+  border: 3px solid #555;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  letter-spacing: 0.05em;
+}
+
+.menuBtn:hover {
+  background: #333;
+  border-color: white;
+}
+
+.menuBtn.secondary {
+  color: yellow;
+  border-color: yellow;
+}
+
+.menuBtn.secondary:hover {
+  background: #2a2600;
+}
+
+/* Gra */
 #tetrisManagerContainer {
   display: flex;
-
   flex-direction: row;
   justify-content: center;
 }
@@ -23,9 +83,7 @@ main {
 .sideContainer {
   height: 70vw;
   max-height: 90vh;
-
   max-width: 70vh;
-
   display: flex;
 }
 
@@ -35,34 +93,28 @@ main {
   border-radius: 2vw;
   background-color: gray;
   text-align: center;
-
   max-height: fit-content;
 }
 
 @font-face {
-  src: url('../assets/Minecraft.ttf');
   font-family: minecraft;
+  src: url(../assets/Minecraft.ttf);
 }
 
 .brick {
   --border-size: calc(var(--brick-size) * 0.2);
-
   box-sizing: border-box;
-
   width: var(--brick-size);
   height: var(--brick-size);
-
   border-top: var(--border-size) solid;
   border-left: var(--border-size) solid;
   border-bottom: var(--border-size) solid;
   border-right: var(--border-size) solid;
-
   border-style: outset;
 }
 
 .red {
   background-color: red;
-  
   border-top-color: tomato;
   border-left-color: darkred;
   border-bottom-color: darkred;
@@ -71,7 +123,6 @@ main {
 
 .orange {
   background-color: orange;
-
   border-top-color: sandybrown;
   border-left-color: darkorange;
   border-bottom-color: darkorange;
@@ -80,7 +131,6 @@ main {
 
 .yellow {
   background-color: yellow;
-
   border-top-color: lemonchiffon;
   border-left-color: gold;
   border-bottom-color: gold;
@@ -89,7 +139,6 @@ main {
 
 .green {
   background-color: green;
-  
   border-top-color: lightgreen;
   border-left-color: darkgreen;
   border-bottom-color: darkgreen;
@@ -98,7 +147,6 @@ main {
 
 .cyan {
   background-color: cyan;
-
   border-top-color: lightcyan;
   border-left-color: darkcyan;
   border-bottom-color: darkcyan;
@@ -107,7 +155,6 @@ main {
 
 .blue {
   background-color: blue;
-
   border-top-color: lightskyblue;
   border-left-color: darkblue;
   border-bottom-color: darkblue;
@@ -116,14 +163,20 @@ main {
 
 .purple {
   background-color: magenta;
-
   border-top-color: plum;
   border-left-color: purple;
   border-bottom-color: purple;
   border-right-color: plum;
 }
 
-
-
-
-
+/* Wynik */
+#scoreDisplay {
+  font-family: minecraft, monospace;
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  color: white;
+  background: black;
+  border: 3px solid #333;
+  border-radius: 8px;
+  padding: 0.4rem 1.2rem;
+  letter-spacing: 0.05em;
+}
