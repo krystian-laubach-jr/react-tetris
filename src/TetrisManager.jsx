@@ -198,14 +198,14 @@ function TetrisManager() {
       });
     };
 
-    if (isAtBottom(currentPieceCells) || isPieceUnder(currentPieceCells)) {
+    if (isAtBottom(cells) || isPieceUnder(cells)) {
       clear()
       spawnNextPiece();
       return
     }
 
     if (isDrop) {
-      newCells = currentPieceCells; // start from current position
+      newCells = cells; // start from current position
 
       while (true) {
         // stop if current position can't move further
@@ -223,7 +223,7 @@ function TetrisManager() {
       }
     }
     else {
-      newCells = currentPieceCells.map(id => {
+      newCells = cells.map(id => {
         const cell = currentField.flat().find(c => c.id === id);
         return `${cell.rowId + 1}.${cell.colId}`;
       });
@@ -514,8 +514,7 @@ const checkBlockOut = (piece) => {
   }
   //#endregion
 
-  //Keyboard controls
-  // place these lines right before the keyboard useEffect, after all functions are defined
+  //#region Keyboard controls
   const fallPieceRef = useRef(null);
   const movePieceRef = useRef(null);
   const holdPieceRef = useRef(null);
@@ -540,7 +539,7 @@ const checkBlockOut = (piece) => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []); // empty deps — listener never re-registers
-
+  //#endregion
 
   // Game loop
   useEffect(() => {
@@ -555,30 +554,9 @@ const checkBlockOut = (piece) => {
 
   return (
     <>
-      <div>
-        <div>
-          <button onClick={() => spawnNextPiece()}>spawn piece</button>
-          <button onClick={() => fallPiece()}>fall piece</button>
-        </div>
-
-        <div>
-          <button onClick={() => movePiece(true)}>left</button>
-          <button onClick={() => movePiece(false)}>right</button>
-        </div>
-
-        <div>
-          <button onClick={() => fallPiece(true)}>drop</button>
-          <button onClick={() => holdPiece(true)}>hold</button>
-        </div>
-
-        <div>
-          <button onClick={() => clear()}>clear</button>
-        </div>
-      </div>
-
       <TetrisHeld heldPiece={heldPiece} heldColor={heldPieceColor}/>
       <TetrisField fieldData={field}/>
-      <TetrisNext nextPiece={nextPiece} nextColor={nextColor} onNextClick={getNextStockedPiece}/>
+      <TetrisNext nextPiece={nextPiece} nextColor={nextColor}/>
     </>
 
   );
