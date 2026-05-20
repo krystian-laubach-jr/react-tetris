@@ -50,6 +50,7 @@ function TetrisManager() {
   const [nextColor, setNextColor] = useState();
 
   const pieces = ['z', 'rz', 'l', 'rl', 't', 'line', 'square'];
+
   const pieceStartingCells = [
     { name: 'z', coords: ['0.4', '0.5', '1.5', '1.6'] },
     { name: 'rz', coords: ['0.4', '0.5', '1.3', '1.4'] },
@@ -59,6 +60,40 @@ function TetrisManager() {
     { name: 'line', coords: ['0.4', '1.4', '2.4', '3.4'] },
     { name: 'square', coords: ['0.4', '0.5', '1.4', '1.5'] }
   ];
+
+  const pieceRotations = [
+  { name: 'z', rotations: [
+    ['0.4', '0.5', '1.5', '1.6'],
+    ['0.5', '1.4', '1.5', '2.4'],
+  ]},
+  { name: 'rz', rotations: [
+    ['0.4', '0.5', '1.3', '1.4'],
+    ['0.4', '1.4', '1.5', '2.5'],
+  ]},
+  { name: 'l', rotations: [
+    ['0.4', '1.4', '2.4', '2.5'],
+    ['0.4', '0.5', '0.6', '1.4'],
+    ['0.4', '0.5', '1.5', '2.5'],
+    ['0.6', '1.4', '1.5', '1.6'],
+  ]},
+  { name: 'rl', rotations: [
+    ['0.5', '1.5', '2.4', '2.5'],
+    ['0.4', '1.4', '1.5', '1.6'],
+    ['0.4', '0.5', '1.4', '2.4'],
+    ['0.4', '0.5', '0.6', '1.6'],
+  ]},
+{ name: 't', rotations: [
+  ['0.4', '1.3', '1.4', '1.5'],  // stem up
+  ['0.3', '1.3', '1.4', '2.3'],  // stem right
+  ['0.3', '0.4', '0.5', '1.4'],  // stem down
+  ['0.4', '1.3', '1.4', '2.4'],  // stem left
+]},
+  { name: 'line', rotations: [
+    ['0.4', '1.4', '2.4', '3.4'],
+    ['1.3', '1.4', '1.5', '1.6'],
+  ]},
+];
+
   const [stockedPieces, setStockedPieces] = useState([]);
   const [nextPiece, setNextPiece] = useState();
 
@@ -74,6 +109,7 @@ function TetrisManager() {
 
   const currentPieceCellsRef = useRef([]);
   const currentPieceColorRef = useRef("");
+  const currentRotationIndexRef = useRef(0);
   const fieldRef = useRef([]);
   //#endregion
 
@@ -100,6 +136,7 @@ function TetrisManager() {
   const spawnPiece = (piece, color, existingField = null) => {
     if (!piece || !color) return;
     if (checkBlockOut(piece)) return;
+    currentRotationIndexRef.current = 0;
 
     setField((oldField) => {
       const baseField = existingField || oldField;
@@ -283,6 +320,72 @@ function TetrisManager() {
     setCurrentPieceCells(newCells);
     updateGhostPiece(currentPieceCellsRef.current, fieldRef.current); // pass refs so ghost always has latest values
   };
+
+  const rotatePiece = () => {
+    const cells = currentPieceCellsRef.current;
+    const color = currentPieceColorRef.current;
+    const currentField = fieldRef.current;
+
+    const pieceData = pieceRotations.find(p => p.name === currentPiece);
+    if (!pieceData) return;
+    if (currentPiece === 'square') return;
+
+    const currentRotationTemplate = pieceData.rotations[currentRotationIndexRef.current];
+    const nextRotationIndex = (currentRotationIndexRef.current + 1) % pieceData.rotations.length;
+    const nextRotationTemplate = pieceData.rotations[nextRotationIndex];
+
+    const templateAnchorRow = parseInt(currentRotationTemplate[0].split('.')[0]);
+    const templateAnchorCol = parseInt(currentRotationTemplate[0].split('.')[1]);
+    const actualAnchorRow = parseInt(cells[0].split('.')[0]);
+    const actualAnchorCol = parseInt(cells[0].split('.')[1]);
+
+    const rowOffset = actualAnchorRow - templateAnchorRow;
+    const colOffset = actualAnchorCol - templateAnchorCol;
+
+    // kicks to try in order: no kick, left 1, right 1, left 2, right 2
+    const kicks = [0, -1, 1, -2, 2];
+
+    for (const kick of kicks) {
+      const nextCells = nextRotationTemplate.map(id => {
+        const row = parseInt(id.split('.')[0]) + rowOffset;
+        const col = parseInt(id.split('.')[1]) + colOffset + kick; // apply kick offset
+        return `${row}.${col}`;
+      });
+
+      const outOfBounds = nextCells.some(id => {
+        const row = parseInt(id.split('.')[0]);
+        const col = parseInt(id.split('.')[1]);
+        return row < 0 || row > 19 || col < 0 || col > 9;
+      });
+      if (outOfBounds) continue; // try next kick
+
+      const isColliding = nextCells.some(id => {
+        const cell = currentField.flat().find(c => c.id === id);
+        return cell && cell.isFilled && !cells.includes(id);
+      });
+      if (isColliding) continue; // try next kick
+
+      // this kick worked — apply it
+      const newField = currentField.map(row =>
+        row.map(cell => {
+          if (nextCells.includes(cell.id))
+            return { ...cell, isFilled: true, color };
+          if (cells.includes(cell.id))
+            return { ...cell, isFilled: false, color: '' };
+          return cell;
+        })
+      );
+
+      currentRotationIndexRef.current = nextRotationIndex;
+      fieldRef.current = newField;
+      currentPieceCellsRef.current = nextCells;
+      setField(newField);
+      setCurrentPieceCells(nextCells);
+      updateGhostPiece(currentPieceCellsRef.current, fieldRef.current);
+      return; // stop as soon as a kick works
+    }
+    // if all kicks failed, rotation is fully blocked — do nothing
+  };
   //#endregion
 
 
@@ -428,10 +531,9 @@ const checkBlockOut = (piece) => {
       holdPiece(); // Hold piece
     } else if (event.key === 'r') {
       window.location.reload(true);
+    }  else if (event.key === 'ArrowUp') {
+      rotatePiece();
     }
-
-    
-
   };
 
   window.addEventListener('keydown', handleKeyDown);
@@ -439,7 +541,7 @@ const checkBlockOut = (piece) => {
   return () => {
     window.removeEventListener('keydown', handleKeyDown);
   };
-}, [fallPiece, movePiece, holdPiece]);
+}, [fallPiece, movePiece, holdPiece, rotatePiece]);
 
 
   // Game loop
@@ -492,7 +594,3 @@ export default TetrisManager;
 //punkty
 
 //rotate
-
-//ghost piece (optional)
-
-//blockout
