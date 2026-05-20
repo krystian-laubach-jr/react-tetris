@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import TetrisField from './TetrisField';
 import TetrisNext from './TetrisNext';
 import TetrisHeld from './TetrisHeld';
+import Score from './Score';
 import GameOverModal from './GameOverModal';
 
 function TetrisManager({ onGoToLeaderboard }) {
@@ -12,20 +13,16 @@ function TetrisManager({ onGoToLeaderboard }) {
 
   const generateField = () => {
     let tempRowsArray = [];
-    
     for (let i=0; i < 20; i++) {
-
       let tempColsArray = [];
       for (let j=0; j < 10; j++) {
         tempColsArray.push(
           {rowId:i, colId:j, id:`${i}.${j}`, isFilled: false, isGhost: false, color:""}
         );
       }
-
       tempRowsArray.push(tempColsArray);
     }
-    console.log(tempRowsArray)
-    return tempRowsArray
+    return tempRowsArray;
   }
   //#endregion
 
@@ -37,17 +34,16 @@ function TetrisManager({ onGoToLeaderboard }) {
     fieldRef.current = initialField;
     getNextStockedPiece();
     spawnPiece(
-    pieces[Math.floor(Math.random() * pieces.length)],
-    colors[Math.floor(Math.random() * colors.length)],
-    initialField
-  );
-
+      pieces[Math.floor(Math.random() * pieces.length)],
+      colors[Math.floor(Math.random() * colors.length)],
+      initialField
+    );
   }, []);
   //#endregion
 
 
   //#region piece and color consts
-  const colors = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple' ];
+  const colors = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple'];
   const [nextColor, setNextColor] = useState();
 
   const pieces = ['z', 'rz', 'l', 'rl', 't', 'line', 'square'];
@@ -63,56 +59,62 @@ function TetrisManager({ onGoToLeaderboard }) {
   ];
 
   const pieceRotations = [
-  { name: 'z', rotations: [
-    ['0.4', '0.5', '1.5', '1.6'],
-    ['0.5', '1.4', '1.5', '2.4'],
-  ]},
-  { name: 'rz', rotations: [
-    ['0.4', '0.5', '1.3', '1.4'],
-    ['0.4', '1.4', '1.5', '2.5'],
-  ]},
-  { name: 'l', rotations: [
-    ['0.4', '1.4', '2.4', '2.5'],
-    ['0.4', '0.5', '0.6', '1.4'],
-    ['0.4', '0.5', '1.5', '2.5'],
-    ['0.6', '1.4', '1.5', '1.6'],
-  ]},
-  { name: 'rl', rotations: [
-    ['0.5', '1.5', '2.4', '2.5'],
-    ['0.4', '1.4', '1.5', '1.6'],
-    ['0.4', '0.5', '1.4', '2.4'],
-    ['0.4', '0.5', '0.6', '1.6'],
-  ]},
-{ name: 't', rotations: [
-  ['0.4', '1.3', '1.4', '1.5'],  // stem up
-  ['0.3', '1.3', '1.4', '2.3'],  // stem right
-  ['0.3', '0.4', '0.5', '1.4'],  // stem down
-  ['0.4', '1.3', '1.4', '2.4'],  // stem left
-]},
-  { name: 'line', rotations: [
-    ['0.4', '1.4', '2.4', '3.4'],
-    ['1.3', '1.4', '1.5', '1.6'],
-  ]},
-];
+    { name: 'z', rotations: [
+      ['0.4', '0.5', '1.5', '1.6'],
+      ['0.5', '1.4', '1.5', '2.4'],
+    ]},
+    { name: 'rz', rotations: [
+      ['0.4', '0.5', '1.3', '1.4'],
+      ['0.4', '1.4', '1.5', '2.5'],
+    ]},
+    { name: 'l', rotations: [
+      ['0.4', '1.4', '2.4', '2.5'],
+      ['0.4', '0.5', '0.6', '1.4'],
+      ['0.4', '0.5', '1.5', '2.5'],
+      ['0.6', '1.4', '1.5', '1.6'],
+    ]},
+    { name: 'rl', rotations: [
+      ['0.5', '1.5', '2.4', '2.5'],
+      ['0.4', '1.4', '1.5', '1.6'],
+      ['0.4', '0.5', '1.4', '2.4'],
+      ['0.4', '0.5', '0.6', '1.6'],
+    ]},
+    { name: 't', rotations: [
+      ['0.4', '1.3', '1.4', '1.5'],
+      ['0.3', '1.3', '1.4', '2.3'],
+      ['0.3', '0.4', '0.5', '1.4'],
+      ['0.4', '1.3', '1.4', '2.4'],
+    ]},
+    { name: 'line', rotations: [
+      ['0.4', '1.4', '2.4', '3.4'],
+      ['1.3', '1.4', '1.5', '1.6'],
+    ]},
+  ];
 
   const [stockedPieces, setStockedPieces] = useState([]);
   const [nextPiece, setNextPiece] = useState();
 
-
   const [currentPiece, setCurrentPiece] = useState();
   const [currentPieceCells, setCurrentPieceCells] = useState([]);
-  const [currentPieceColor, setCurrentPieceColor] = useState("")
+  const [currentPieceColor, setCurrentPieceColor] = useState("");
 
-  const [canHoldPiece, setCanHoldPiece] = useState(true)
+  const [canHoldPiece, setCanHoldPiece] = useState(true);
   const [isPieceHeld, setIsPieceHeld] = useState(false);
   const [heldPiece, setHeldPiece] = useState([]);
-  const [heldPieceColor, setHeldPieceColor] = useState("")
+  const [heldPieceColor, setHeldPieceColor] = useState("");
 
-  // Score & game over
-  const [score, setScore] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
   const isGameOverRef = useRef(false);
+
+  const [score, setScore] = useState(0);
   const scoreRef = useRef(0);
+  const comboRef = useRef(0);
+
+  const [level, setLevel] = useState(1);
+  const levelRef = useRef(1);
+
+  const levelSpeeds = [800, 650, 500, 380, 280, 200, 150, 110, 80, 50];
+  const levelSpeedRef = useRef(800);
 
   const currentPieceCellsRef = useRef([]);
   const currentPieceColorRef = useRef("");
@@ -126,18 +128,17 @@ function TetrisManager({ onGoToLeaderboard }) {
     let currentStockedPieces = [...stockedPieces];
     let piecesLeft = currentStockedPieces.length;
 
-    if ( piecesLeft === 0) {
+    if (piecesLeft === 0) {
       currentStockedPieces = pieces;
     }
 
-    let newNextPieceId = Math.floor(Math.random() * (piecesLeft));
+    let newNextPieceId = Math.floor(Math.random() * piecesLeft);
     let newNextPiece = currentStockedPieces[newNextPieceId];
     let newStockedPieces = currentStockedPieces.filter((_, i) => i !== newNextPieceId);
 
-    console.log('Next piece: ' + newNextPiece + ' remaining pieces: ' + newStockedPieces);
     setStockedPieces(newStockedPieces);
     setNextPiece(newNextPiece);
-    setNextColor(colors[Math.floor(Math.random() * (7))])
+    setNextColor(colors[Math.floor(Math.random() * 7)]);
   }
 
   const spawnPiece = (piece, color, existingField = null) => {
@@ -146,13 +147,12 @@ function TetrisManager({ onGoToLeaderboard }) {
     currentRotationIndexRef.current = 0;
 
     setField((oldField) => {
-      const baseField = existingField || oldField;
       const cellsToFill = pieceStartingCells.find(p => p.name === piece).coords;
-      const newField = oldField.map(row =>
+      const newField = (existingField || oldField).map(row =>
         row.map(cell =>
-        cellsToFill.includes(cell.id)
-          ? { ...cell, isFilled: true, color: color }
-          : cell
+          cellsToFill.includes(cell.id)
+            ? { ...cell, isFilled: true, color: color }
+            : cell
         )
       );
       fieldRef.current = newField;
@@ -162,15 +162,15 @@ function TetrisManager({ onGoToLeaderboard }) {
       return newField;
     });
 
-    setCurrentPiece(piece)
+    setCurrentPiece(piece);
     setCurrentPieceColor(color);
     currentPieceColorRef.current = color;
   }
 
   const spawnNextPiece = () => {
-    spawnPiece(nextPiece, nextColor)
-    getNextStockedPiece()
-    setCanHoldPiece(true)
+    spawnPiece(nextPiece, nextColor);
+    getNextStockedPiece();
+    setCanHoldPiece(true);
   }
   //#endregion
 
@@ -180,8 +180,8 @@ function TetrisManager({ onGoToLeaderboard }) {
     if (isGameOverRef.current) return;
     const cells = currentPieceCellsRef.current;
     const color = currentPieceColorRef.current;
-    const currentField = fieldRef.current;    
-    let newCells = []
+    const currentField = fieldRef.current;
+    let newCells = [];
 
     const isAtBottom = (cellArray) => {
       return cellArray.some(id => {
@@ -195,44 +195,39 @@ function TetrisManager({ onGoToLeaderboard }) {
       return cellArray.some(id => {
         const cell = currentField.flat().find(c => c.id === id);
         if (!cell) return false;
-
         const cellBelow = currentField[cell.rowId + 1]?.[cell.colId];
-
-        return (
-          cellBelow &&
-          cellBelow.isFilled &&
-          !cellArray.includes(cellBelow.id)
-        );
+        return cellBelow && cellBelow.isFilled && !cellArray.includes(cellBelow.id);
       });
     };
 
     if (isAtBottom(cells) || isPieceUnder(cells)) {
-      clear()
+      clear();
       spawnNextPiece();
-      return
+      return;
     }
 
     if (isDrop) {
       newCells = cells;
+      let dropHeight = 0;
 
       while (true) {
-        if (isAtBottom(newCells) || isPieceUnder(newCells)) {
-          break;
-        }
-
+        if (isAtBottom(newCells) || isPieceUnder(newCells)) break;
         newCells = newCells.map(id => {
           const cell = currentField.flat().find(c => c.id === id);
           if (!cell) return null;
-
           return `${cell.rowId + 1}.${cell.colId}`;
         });
+        dropHeight++;
       }
-    }
-    else {
+
+      addScore(dropHeight * 2);
+    } else {
       newCells = cells.map(id => {
         const cell = currentField.flat().find(c => c.id === id);
         return `${cell.rowId + 1}.${cell.colId}`;
       });
+
+      addScore(1);
     }
 
     const newField = currentField.map(row =>
@@ -244,71 +239,59 @@ function TetrisManager({ onGoToLeaderboard }) {
         return cell;
       })
     );
-    
+
     fieldRef.current = newField;
     currentPieceCellsRef.current = newCells;
     setCurrentPieceCells(newCells);
     updateGhostPiece(currentPieceCellsRef.current, fieldRef.current);
 
-    if(isDrop) {
-      clear()
+    if (isDrop) {
+      clear();
       spawnNextPiece();
     }
   };
 
   const movePiece = (isToLeft) => {
     if (isGameOverRef.current) return;
-    const cells = currentPieceCellsRef.current;   
-    const color = currentPieceColorRef.current;   
-    const currentField = fieldRef.current;        
+    const cells = currentPieceCellsRef.current;
+    const color = currentPieceColorRef.current;
+    const currentField = fieldRef.current;
 
-    const isAtLeftSide = currentPieceCells.some(id => {
+    const isAtLeftSide = cells.some(id => {
       const cell = currentField.flat().find(c => c.id === id);
       return cell.colId === 0;
     });
 
-    const isAtRightSide = currentPieceCells.some(id => {
+    const isAtRightSide = cells.some(id => {
       const cell = currentField.flat().find(c => c.id === id);
       return cell.colId === 9;
     });
 
-    const isPieceToLeft = currentPieceCells.some(id => {
+    const isPieceToLeft = cells.some(id => {
       const cell = currentField.flat().find(c => c.id === id);
       const cellLeft = currentField[cell.rowId]?.[cell.colId - 1];
-
-      return (
-        cellLeft &&
-        cellLeft.isFilled &&
-        !currentPieceCells.includes(cellLeft.id)
-      );
+      return cellLeft && cellLeft.isFilled && !cells.includes(cellLeft.id);
     });
 
-    const isPieceToRight = currentPieceCells.some(id => {
+    const isPieceToRight = cells.some(id => {
       const cell = currentField.flat().find(c => c.id === id);
       const cellRight = currentField[cell.rowId]?.[cell.colId + 1];
-
-      return (
-        cellRight &&
-        cellRight.isFilled &&
-        !currentPieceCells.includes(cellRight.id)
-      );
+      return cellRight && cellRight.isFilled && !cells.includes(cellRight.id);
     });
 
     let newCells = [];
 
     if (isToLeft && !isAtLeftSide && !isPieceToLeft) {
-      newCells = currentPieceCells.map(id => {
+      newCells = cells.map(id => {
         const cell = currentField.flat().find(c => c.id === id);
         return `${cell.rowId}.${cell.colId - 1}`;
       });
-    } 
-    else if (!isToLeft && !isAtRightSide && !isPieceToRight) {
-      newCells = currentPieceCells.map(id => {
+    } else if (!isToLeft && !isAtRightSide && !isPieceToRight) {
+      newCells = cells.map(id => {
         const cell = currentField.flat().find(c => c.id === id);
         return `${cell.rowId}.${cell.colId + 1}`;
       });
-    } 
-    else {
+    } else {
       return;
     }
 
@@ -397,13 +380,13 @@ function TetrisManager({ onGoToLeaderboard }) {
   //#region other game logic
   const holdPiece = () => {
     if (isGameOverRef.current) return;
-    if(!canHoldPiece){ return }
+    if (!canHoldPiece) return;
 
     const cells = currentPieceCellsRef.current;
     const currentField = fieldRef.current;
 
-    setHeldPiece(currentPiece)
-    setHeldPieceColor(currentPieceColor)
+    setHeldPiece(currentPiece);
+    setHeldPieceColor(currentPieceColor);
 
     const newField = currentField.map(row =>
       row.map(cell => {
@@ -416,16 +399,16 @@ function TetrisManager({ onGoToLeaderboard }) {
     fieldRef.current = newField;
     currentPieceCellsRef.current = [];
     setField(newField);
-    
-    if( !isPieceHeld) {
-      spawnNextPiece()
-      setIsPieceHeld(true)
+
+    if (!isPieceHeld) {
+      spawnNextPiece();
+      setIsPieceHeld(true);
     }
 
     if (isPieceHeld) {
-      spawnPiece(heldPiece, heldPieceColor)
+      spawnPiece(heldPiece, heldPieceColor);
     }
-    setCanHoldPiece(false)
+    setCanHoldPiece(false);
   }
 
   const clear = () => {
@@ -437,15 +420,14 @@ function TetrisManager({ onGoToLeaderboard }) {
 
     const clearedLines = 20 - remainingRows.length;
 
-    // Award points based on lines cleared
-    const pointsMap = [0, 100, 300, 500, 800];
-    const pts = pointsMap[Math.min(clearedLines, 4)];
-    if (pts > 0) {
-      setScore(s => {
-        const newScore = s + pts;
-        scoreRef.current = newScore;
-        return newScore;
-      });
+    if (clearedLines > 0) {
+      const linePoints = [0, 100, 300, 500, 800];
+      const combo = comboRef.current;
+      const points = linePoints[clearedLines] * (combo + 1);
+      addScore(points);
+      comboRef.current += 1;
+    } else {
+      comboRef.current = 0;
     }
 
     const newRows = [];
@@ -509,6 +491,18 @@ function TetrisManager({ onGoToLeaderboard }) {
     fieldRef.current = newField;
     setField(newField);
   };
+
+  const addScore = (points) => {
+    scoreRef.current += points;
+    setScore(scoreRef.current);
+
+    const newLevel = Math.min(10, Math.floor(scoreRef.current / 1500) + 1);
+    if (newLevel !== levelRef.current) {
+      levelRef.current = newLevel;
+      levelSpeedRef.current = levelSpeeds[newLevel - 1];
+      setLevel(newLevel);
+    }
+  };
   //#endregion
 
 
@@ -518,9 +512,7 @@ function TetrisManager({ onGoToLeaderboard }) {
     const isBlockedOut = cellsToFill.some(id =>
       fieldRef.current.flat().find(c => c.id === id)?.isFilled
     );
-    if (isBlockedOut) {
-      blockOut();
-    }
+    if (isBlockedOut) blockOut();
     return isBlockedOut;
   };
 
@@ -531,7 +523,7 @@ function TetrisManager({ onGoToLeaderboard }) {
   //#endregion
 
 
-  //#region Keyboard controls
+  //#region keyboard controls
   const fallPieceRef = useRef(null);
   const movePieceRef = useRef(null);
   const holdPieceRef = useRef(null);
@@ -565,10 +557,10 @@ function TetrisManager({ onGoToLeaderboard }) {
       if (currentPieceCellsRef.current.length === 0) return;
       if (isGameOverRef.current) return;
       fallPieceRef.current();
-    }, 800);
+    }, levelSpeeds[levelRef.current - 1]);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [level]);
 
 
   return (
@@ -580,11 +572,11 @@ function TetrisManager({ onGoToLeaderboard }) {
           onGoToLeaderboard={onGoToLeaderboard}
         />
       )}
-      <TetrisHeld heldPiece={heldPiece} heldColor={heldPieceColor}/>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-        <TetrisField fieldData={field}/>
-        <div id="scoreDisplay">Wynik: {score}</div>
+      <div id='leftMenu'>
+        <TetrisHeld heldPiece={heldPiece} heldColor={heldPieceColor}/>
+        <Score score={score} level={level}/>
       </div>
+      <TetrisField fieldData={field}/>
       <TetrisNext nextPiece={nextPiece} nextColor={nextColor}/>
     </>
   );

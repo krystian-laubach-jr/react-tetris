@@ -1,7 +1,6 @@
 import './styles/TetrisNext.css';
-import BlockDisplay from './BlockDisplay';
 
-function TetrisHeld({heldPiece, heldColor}) {
+function Score({score, level}) {
 
   return (
     <div className='sideContainer' style={{height: 'auto'}}>
@@ -9,8 +8,11 @@ function TetrisHeld({heldPiece, heldColor}) {
       <div className='border'>
         <div id='tetrisNextContainer'>
 
-          <h1>Held:</h1>
-          <BlockDisplay piece={heldPiece} color={heldColor}/>
+          <h1>Score:</h1>
+          <p>{score}</p>
+          <br/>
+          <h1>Level:</h1>
+          <p>{level}</p>
           
         </div>
       </div>
@@ -19,4 +21,4 @@ function TetrisHeld({heldPiece, heldColor}) {
   );
 }
 
-export default TetrisHeld;
+export default Score;
