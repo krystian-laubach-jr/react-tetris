@@ -14,3 +14,13 @@
     );
 }
 
+#tetrisNextContainer > p {
+    margin: 0;
+    font-family: minecraft;
+
+    font-size: min(
+        2vw,
+        3vh
+    );
+}
+

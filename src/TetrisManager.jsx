@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import TetrisField from './TetrisField';
 import TetrisNext from './TetrisNext';
 import TetrisHeld from './TetrisHeld';
+import Score from './Score';
 
 function TetrisManager() {
   //#region field
@@ -111,6 +112,10 @@ function TetrisManager() {
   const currentPieceColorRef = useRef("");
   const currentRotationIndexRef = useRef(0);
   const fieldRef = useRef([]);
+
+  const [score, setScore] = useState(0);
+  const scoreRef = useRef(0);
+  const comboRef = useRef(0); // tracks consecutive clears
   //#endregion
 
 
@@ -172,13 +177,13 @@ function TetrisManager() {
   const fallPiece = (isDrop) => {
     const cells = currentPieceCellsRef.current;
     const color = currentPieceColorRef.current;
-    const currentField = fieldRef.current;    
-    let newCells = []
+    const currentField = fieldRef.current;
+    let newCells = [];
 
     const isAtBottom = (cellArray) => {
       return cellArray.some(id => {
         const cell = currentField.flat().find(c => c.id === id);
-        if (!cell) return true; // treat as bottom
+        if (!cell) return true;
         return cell.rowId >= 19;
       });
     };
@@ -186,10 +191,8 @@ function TetrisManager() {
     const isPieceUnder = (cellArray) => {
       return cellArray.some(id => {
         const cell = currentField.flat().find(c => c.id === id);
-        if (!cell) return false; // ✅ prevent crash
-
+        if (!cell) return false;
         const cellBelow = currentField[cell.rowId + 1]?.[cell.colId];
-
         return (
           cellBelow &&
           cellBelow.isFilled &&
@@ -199,37 +202,36 @@ function TetrisManager() {
     };
 
     if (isAtBottom(cells) || isPieceUnder(cells)) {
-      clear()
+      clear();
       spawnNextPiece();
-      return
+      return;
     }
 
     if (isDrop) {
-      newCells = cells; // start from current position
+      newCells = cells;
+      let dropHeight = 0;
 
       while (true) {
-        // stop if current position can't move further
-        if (isAtBottom(newCells) || isPieceUnder(newCells)) {
-          break;
-        }
-
-        // otherwise move down
+        if (isAtBottom(newCells) || isPieceUnder(newCells)) break;
         newCells = newCells.map(id => {
           const cell = currentField.flat().find(c => c.id === id);
           if (!cell) return null;
-
           return `${cell.rowId + 1}.${cell.colId}`;
         });
+        dropHeight++;
       }
-    }
-    else {
+
+      addScore(dropHeight * 2); // hard drop: 2 points per row dropped
+    } else {
       newCells = cells.map(id => {
         const cell = currentField.flat().find(c => c.id === id);
         return `${cell.rowId + 1}.${cell.colId}`;
       });
+
+      addScore(1); // soft drop: 1 point per row dropped
     }
 
-    const newField = currentField.map(row => // build from ref snapshot, not stale state
+    const newField = currentField.map(row =>
       row.map(cell => {
         if (newCells.includes(cell.id))
           return { ...cell, isFilled: true, color };
@@ -238,14 +240,14 @@ function TetrisManager() {
         return cell;
       })
     );
-    
+
     fieldRef.current = newField;
     currentPieceCellsRef.current = newCells;
     setCurrentPieceCells(newCells);
-    updateGhostPiece(currentPieceCellsRef.current, fieldRef.current); // pass refs so ghost always has latest values
+    updateGhostPiece(currentPieceCellsRef.current, fieldRef.current);
 
-    if(isDrop) {
-      clear()
+    if (isDrop) {
+      clear();
       spawnNextPiece();
     }
   };
@@ -423,13 +425,24 @@ function TetrisManager() {
   }
 
   const clear = () => {
-    const currentField = fieldRef.current; // read from ref, not state — avoids stale closure
+    const currentField = fieldRef.current;
 
-    let remainingRows = currentField.filter(row => // use currentField (ref) not field (state)
+    let remainingRows = currentField.filter(row =>
       row.some(cell => !cell.isFilled)
     );
 
     const clearedLines = 20 - remainingRows.length;
+
+    if (clearedLines > 0) {
+      // base points per line count, multiplied by combo
+      const linePoints = [0, 100, 300, 500, 800]; // 1, 2, 3, 4 lines
+      const combo = comboRef.current;
+      const points = linePoints[clearedLines] * (combo + 1);
+      addScore(points);
+      comboRef.current += 1; // increment combo on every clear
+    } else {
+      comboRef.current = 0; // reset combo if no lines cleared
+    }
 
     const newRows = [];
     for (let i = 0; i < clearedLines; i++) {
@@ -450,8 +463,8 @@ function TetrisManager() {
       }))
     );
 
-    fieldRef.current = correctedField; // sync field ref so interval works with the cleared board
-    setField(correctedField);           // update state to trigger re-render
+    fieldRef.current = correctedField;
+    setField(correctedField);
   };
 
   const updateGhostPiece = (liveCells, currentField) => {
@@ -492,6 +505,11 @@ function TetrisManager() {
   fieldRef.current = newField;           // sync ref so next interval/keypress reads field with ghost applied
   setField(newField);
 };
+
+  const addScore = (points) => {
+    scoreRef.current += points;
+    setScore(scoreRef.current);
+  };
 
   //#endregion
 
@@ -554,7 +572,10 @@ const checkBlockOut = (piece) => {
 
   return (
     <>
+    <div id='leftMenu'>
       <TetrisHeld heldPiece={heldPiece} heldColor={heldPieceColor}/>
+      <Score score={score}/>
+    </div>
       <TetrisField fieldData={field}/>
       <TetrisNext nextPiece={nextPiece} nextColor={nextColor}/>
     </>
