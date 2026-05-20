@@ -542,7 +542,6 @@ function TetrisManager({ onGoToLeaderboard }) {
       else if (event.key === ' ') fallPieceRef.current(true);
       else if (event.key === 'ArrowUp') rotatePieceRef.current();
       else if (event.key === 'c') holdPieceRef.current();
-      else if (event.key === 'r') window.location.reload(true);
     };
 
     window.addEventListener('keydown', handleKeyDown);
