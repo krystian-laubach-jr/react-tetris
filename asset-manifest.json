@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/react-tetris/static/css/main.85973056.css",
-    "main.js": "/react-tetris/static/js/main.23af4cd3.js",
+    "main.js": "/react-tetris/static/js/main.a09b1d72.js",
     "static/media/jumpscare.gif": "/react-tetris/static/media/jumpscare.8be76e5ce2516cefa1b7.gif",
     "static/media/Minecraft.ttf": "/react-tetris/static/media/Minecraft.81f6c7f882fcc2dee106.ttf",
     "index.html": "/react-tetris/index.html",
     "main.85973056.css.map": "/react-tetris/static/css/main.85973056.css.map",
-    "main.23af4cd3.js.map": "/react-tetris/static/js/main.23af4cd3.js.map"
+    "main.a09b1d72.js.map": "/react-tetris/static/js/main.a09b1d72.js.map"
   },
   "entrypoints": [
     "static/css/main.85973056.css",
-    "static/js/main.23af4cd3.js"
+    "static/js/main.a09b1d72.js"
   ]
 }
