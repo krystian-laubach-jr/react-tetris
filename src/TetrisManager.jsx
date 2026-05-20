@@ -515,45 +515,42 @@ const checkBlockOut = (piece) => {
   //#endregion
 
   //Keyboard controls
+  // place these lines right before the keyboard useEffect, after all functions are defined
+  const fallPieceRef = useRef(null);
+  const movePieceRef = useRef(null);
+  const holdPieceRef = useRef(null);
+  const rotatePieceRef = useRef(null);
+
+  fallPieceRef.current = fallPiece;
+  movePieceRef.current = movePiece;
+  holdPieceRef.current = holdPiece;
+  rotatePieceRef.current = rotatePiece;
+
   useEffect(() => {
-  const handleKeyDown = (event) => {
-    console.log(`Key pressed: ${event.key}`);
+    const handleKeyDown = (event) => {
+      if (event.key === 'ArrowLeft') movePieceRef.current(true);
+      else if (event.key === 'ArrowRight') movePieceRef.current(false);
+      else if (event.key === 'ArrowDown') fallPieceRef.current();
+      else if (event.key === ' ') fallPieceRef.current(true);
+      else if (event.key === 'ArrowUp') rotatePieceRef.current();
+      else if (event.key === 'c') holdPieceRef.current();
+      else if (event.key === 'r') window.location.reload(true);
+    };
 
-    if (event.key === 'ArrowLeft') {
-      movePiece(true); // Move left
-    } else if (event.key === 'ArrowRight') {
-      movePiece(false); // Move right
-    } else if (event.key === 'ArrowDown') {
-      fallPiece(); // Fall piece
-    } else if (event.key === ' ') {
-      fallPiece(true); // Drop piece
-    }  else if (event.key === 'c') {
-      holdPiece(); // Hold piece
-    } else if (event.key === 'r') {
-      window.location.reload(true);
-    }  else if (event.key === 'ArrowUp') {
-      rotatePiece();
-    }
-  };
-
-  window.addEventListener('keydown', handleKeyDown);
-
-  return () => {
-    window.removeEventListener('keydown', handleKeyDown);
-  };
-}, [fallPiece, movePiece, holdPiece, rotatePiece]);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []); // empty deps — listener never re-registers
 
 
   // Game loop
   useEffect(() => {
     const interval = setInterval(() => {
       if (currentPieceCellsRef.current.length === 0) return; // don't tick if no active piece
-      console.log("fall pice");
-      fallPiece();
+      fallPieceRef.current();
     }, 800);
 
     return () => clearInterval(interval);
-  }, [fallPiece]);
+  }, []);
 
 
   return (
