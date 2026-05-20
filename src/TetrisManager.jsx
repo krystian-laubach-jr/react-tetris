@@ -116,6 +116,12 @@ function TetrisManager() {
   const [score, setScore] = useState(0);
   const scoreRef = useRef(0);
   const comboRef = useRef(0); // tracks consecutive clears
+
+  const [level, setLevel] = useState(1);
+  const levelRef = useRef(1);
+
+  const levelSpeeds = [800, 650, 500, 380, 280, 200, 150, 110, 80, 50]; // steeper speed curve
+  const levelSpeedRef = useRef(800);
   //#endregion
 
 
@@ -509,6 +515,13 @@ function TetrisManager() {
   const addScore = (points) => {
     scoreRef.current += points;
     setScore(scoreRef.current);
+
+    const newLevel = Math.min(10, Math.floor(scoreRef.current / 1500) + 1); // level up every 1500 points instead of 500
+    if (newLevel !== levelRef.current) {
+      levelRef.current = newLevel;
+      levelSpeedRef.current = levelSpeeds[newLevel - 1]; // update speed ref
+      setLevel(newLevel);
+    }
   };
 
   //#endregion
@@ -562,19 +575,19 @@ const checkBlockOut = (piece) => {
   // Game loop
   useEffect(() => {
     const interval = setInterval(() => {
-      if (currentPieceCellsRef.current.length === 0) return; // don't tick if no active piece
+      if (currentPieceCellsRef.current.length === 0) return;
       fallPieceRef.current();
-    }, 800);
+    }, levelSpeeds[levelRef.current - 1]);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [level]); // re-registers interval whenever level changes
 
 
   return (
     <>
     <div id='leftMenu'>
       <TetrisHeld heldPiece={heldPiece} heldColor={heldPieceColor}/>
-      <Score score={score}/>
+      <Score score={score} level={level}/>
     </div>
       <TetrisField fieldData={field}/>
       <TetrisNext nextPiece={nextPiece} nextColor={nextColor}/>
@@ -584,9 +597,3 @@ const checkBlockOut = (piece) => {
 }
 
 export default TetrisManager;
-
-//todo:
-
-//punkty
-
-//rotate
