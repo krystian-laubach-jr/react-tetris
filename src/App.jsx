@@ -30,6 +30,7 @@ function App() {
       <div id="menuButtons">
         <button className="menuBtn" onClick={() => setPage('game')}>Graj</button>
         <button className="menuBtn secondary" onClick={() => setPage('leaderboard')}>Wyniki</button>
+        <button className="menuBtn github" onClick={() => window.open('https://github.com/krystian-laubach-jr/react-tetris', '_blank')}>Credits</button>
       </div>
     </main>
   );

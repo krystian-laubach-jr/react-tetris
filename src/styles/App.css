@@ -68,7 +68,17 @@ main {
   color: yellow;
   border-color: yellow;
 }
+.menuBtn.github {
+  color: #aaa;
+  border-color: #aaa;
+  font-size: 1rem;
+}
 
+.menuBtn.github:hover {
+  background: #1a1a1a;
+  border-color: white;
+  color: white;
+}
 .menuBtn.secondary:hover {
   background: #2a2600;
 }
