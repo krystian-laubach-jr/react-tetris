@@ -34,3 +34,7 @@
     background-color: rgb(67, 67, 67);
 }
 
+.ghost {
+    opacity: 0.25;
+}
+
